@@ -1,0 +1,15 @@
+# Potential volume mounts for the dev container.
+# Each line is a path relative to $HOME on the host.
+# If the path exists, it will be mounted into the container at the same
+# location under /home/vscode.
+#
+# Append ":ro" to mount read-only; otherwise the mount uses "cached" mode.
+# Blank lines and lines starting with # are ignored.
+# Inline comments are supported: append " #" (space then #) after the entry.
+# Use single or double quotes around paths containing # characters.
+
+.claude       # Claude Code config directory
+.claude.json  # Claude Code config file
+.coderabbit   # CodeRabbit config
+.config/acli  # Atlassian CLI config
+.config/gcloud/application_default_credentials.json:ro  # Google Cloud credentials
