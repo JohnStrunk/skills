@@ -56,6 +56,10 @@ jobs:
     name: "Build devcontainer image"
     runs-on: ubuntu-latest
 
+    permissions:
+      packages: write
+      contents: read
+
     steps:
       - name: Checkout repository
         # https://github.com/actions/checkout
@@ -72,8 +76,19 @@ jobs:
         # https://github.com/crazy-max/ghaction-github-runtime
         uses: crazy-max/ghaction-github-runtime@04d248b84655b509d8c44dc1d6f990c879747487 # v4.0.0
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build devcontainer
-        run: npx -- @devcontainers/cli build --workspace-folder . --cache-from type=gha,scope=devcontainer --cache-to type=gha,mode=min,scope=devcontainer
+        uses: devcontainers/ci@v0.3.1900000449
+        with:
+          imageName: ghcr.io/JohnStrunk/skills-devcontainer
+          cacheFrom: ghcr.io/JohnStrunk/skills-devcontainer
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
 
   # This is a dummy job to determine success of the CI workflow
   ci-success:
