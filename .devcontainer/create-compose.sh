@@ -7,13 +7,12 @@
 
 set -euo pipefail
 
-if [[ $# -ne 2 ]]; then
-    echo "Usage: $0 <repo-name> <docker-image>" >&2
+if [[ $# -ne 1 ]]; then
+    echo "Usage: $0 <docker-image>" >&2
     exit 1
 fi
 
-REPO_NAME="$1"
-DOCKER_IMAGE="$2"
+DOCKER_IMAGE="$1"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 MOUNTS_FILE="${SCRIPT_DIR}/mounts.txt"
@@ -95,7 +94,7 @@ fi
     echo "  devcontainer:"
     echo "    image: ${DOCKER_IMAGE}"
     echo "    volumes:"
-    echo "      - ..:/workspaces/${REPO_NAME}:cached"
+    echo "      - .:/workspace:cached"
     for v in "${extra_volumes[@]+"${extra_volumes[@]}"}"; do
         echo "$v"
     done

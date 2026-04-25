@@ -3,11 +3,11 @@
     "name": "Dev Container",
     "dockerComposeFile": "docker-compose.yml",
     "service": "devcontainer",
-    "workspaceFolder": "/workspaces/skills",
+    "workspaceFolder": "/workspace",
     "shutdownAction": "stopCompose",
     // https://github.com/devcontainers/images/tree/main/src/base-debian
     // The :debian tag is the latest Debian stable release
-    "initializeCommand": ".devcontainer/create-compose.sh skills mcr.microsoft.com/devcontainers/base:debian",
+    "initializeCommand": ".devcontainer/create-compose.sh mcr.microsoft.com/devcontainers/base:debian",
 
     // Available features: https://containers.dev/features
     "features": {
