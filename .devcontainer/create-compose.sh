@@ -94,7 +94,7 @@ fi
     echo "  devcontainer:"
     echo "    image: ${DOCKER_IMAGE}"
     echo "    volumes:"
-    echo "      - .:/workspace:cached"
+    echo "      - ..:/workspace:cached"
     for v in "${extra_volumes[@]+"${extra_volumes[@]}"}"; do
         echo "$v"
     done
