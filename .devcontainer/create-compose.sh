@@ -88,15 +88,32 @@ if [[ -f "$MOUNTS_FILE" ]]; then
     done < "$MOUNTS_FILE"
 fi
 
+IN_CONTAINER=0
+if [ -f /.dockerenv ]; then
+    echo "Running inside a container"
+    IN_CONTAINER=1
+fi
+EXTRA_VOLUMES_COUNT=${#extra_volumes[@]}
+
 # Write the complete docker-compose.yml
 {
     echo "services:"
     echo "  devcontainer:"
     echo "    image: ${DOCKER_IMAGE}"
-    echo "    volumes:"
-    echo "      - ..:/workspace:cached"
-    for v in "${extra_volumes[@]+"${extra_volumes[@]}"}"; do
-        echo "$v"
-    done
+    if [[ $IN_CONTAINER -eq 1 && $EXTRA_VOLUMES_COUNT -eq 0 ]]; then
+        echo "    volumes: []"
+    else
+        echo "    volumes:"
+        # In clone-in-volume mode, initializeCommand runs inside a helper
+        # container (/.dockerenv exists) and VS Code injects the workspace
+        # volume itself. In local-directory mode, we run on the host and
+        # must provide the bind mount.
+        if [ $IN_CONTAINER -eq 0 ]; then
+            echo "      - ..:/workspace:cached"
+        fi
+        for v in "${extra_volumes[@]+"${extra_volumes[@]}"}"; do
+            echo "$v"
+        done
+    fi
     echo "    command: sleep infinity"
 } > "$COMPOSE_FILE"
