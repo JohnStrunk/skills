@@ -50,11 +50,30 @@ jobs:
       - name: Run pre-commit gc
         run: pre-commit gc
 
+  # Build the devcontainer image to make sure it doesn't break.
+  devcontainer:
+    name: "Build devcontainer image"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        # https://github.com/actions/checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          submodules: "recursive"
+
+      - name: Generate docker-compose.yml
+        run: .devcontainer/create-compose.sh mcr.microsoft.com/devcontainers/base:debian
+
+      - name: Build devcontainer
+        run: npx --yes @devcontainers/cli build --workspace-folder .
+
   # This is a dummy job to determine success of the CI workflow
   ci-success:
     name: CI Workflow - Success
     needs:
       - pre-commit
+      - devcontainer
     runs-on: ubuntu-latest
     steps:
       - name: Success
