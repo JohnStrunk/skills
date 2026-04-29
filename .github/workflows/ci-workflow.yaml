@@ -62,6 +62,9 @@ jobs:
         with:
           submodules: "recursive"
 
+      - name: Generate docker-compose.yml
+        run: .devcontainer/create-compose.sh mcr.microsoft.com/devcontainers/base:debian
+
       - name: Build devcontainer
         run: npx --yes @devcontainers/cli build --workspace-folder .
 
