@@ -9,10 +9,7 @@
     library or a walkthrough of a particular process. Tools of use would be
     `showboat` and related, plus `asciiscinema` for recording terminal
     sessions.
-- Spec-driven development
-  - A skill that colaborates with the user to produce EARS and Gherkin
-    specifications for a project, and then uses those specifications to drive
-    the development of the project.
+- ~~Spec-driven development~~ — Done: `ears-gherkin-dev` skill
 - Project scaffolding
   - Python, Typescript, Go, etc.
   - Renovate, Mergify, etc.
