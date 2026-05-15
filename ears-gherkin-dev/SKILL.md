@@ -37,6 +37,14 @@ during each phase of the workflow:
 - `reference/auditing.md` — What the audit script checks, how to
   read its output, and how to fix common findings.
 
+The `templates/` directory contains files to install into the
+project's `features/` directory:
+
+- `templates/dashboard.html` — Interactive spec browser for viewing
+  feature files and step definitions in a web browser.
+- `templates/README.md` — Explains the EARS/Gherkin methodology and
+  directory layout for the team.
+
 ## Workflow
 
 This workflow is mandatory for every behavior change. Follow the steps
@@ -117,6 +125,21 @@ python scripts/audit.py features/
 
 Consult `reference/auditing.md` for interpreting results. Fix all
 findings before considering the work complete.
+
+## Features Directory Setup
+
+Before any specification work, ensure the features directory contains
+the dashboard and README. Check once per session — if they already
+exist, skip this step.
+
+1. If `features/dashboard.html` does not exist, copy it from this
+   skill's `templates/dashboard.html`.
+2. If `features/README.md` does not exist, copy it from this skill's
+   `templates/README.md`.
+
+These files help the team browse and understand the specification.
+Do not modify the installed copies — update the templates in the
+skill directory if changes are needed.
 
 ## Locating Feature Files
 
