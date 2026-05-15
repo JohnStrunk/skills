@@ -245,6 +245,110 @@ Scenario Outline: User actions
 
 ---
 
+## Property-Based Testing
+
+Where practical, use property-based testing to provide broader
+coverage than example-only scenarios. Instead of checking specific
+input-output pairs, property-based tests verify that a property or
+invariant holds across many inputs.
+
+### When to Use
+
+- The requirement states a general rule that should hold for any
+  valid input (e.g., "all passwords must be at least 8 characters")
+- Boundary conditions are numerous or non-obvious
+- The behavior is mathematical or algorithmic (sorting, filtering,
+  calculations)
+- Example-based testing would require many rows to cover the input
+  space adequately
+
+### When NOT to Use
+
+- The behavior is inherently example-driven (specific error messages
+  for specific inputs)
+- The number of valid inputs is small and enumerable
+- The property is harder to express than the examples
+
+### Expressing Properties in Gherkin
+
+Use Scenario Outlines with generated or representative data, and
+write Then steps that assert properties rather than exact values:
+
+```gherkin
+Rule: When the user submits a search query, the search service shall return only results matching the query.
+
+  Scenario Outline: Search results match the query term
+    Given the product catalog contains diverse products
+    When the user searches for "<query>"
+    Then every result should contain "<query>" in its name
+      or description
+    And no result should be unrelated to "<query>"
+
+    Examples: Representative queries across categories
+      | query       |
+      | headphones  |
+      | running     |
+      | organic     |
+      | bluetooth   |
+      | waterproof  |
+```
+
+### Property Assertions in Step Definitions
+
+The Then step asserts a **property** (every result matches) rather
+than a **specific value** (result #1 is "Sony Headphones"). The step
+definition should:
+
+1. Retrieve the full result set
+2. Assert the property holds for every item
+3. Provide a clear failure message identifying which item violated
+   the property
+
+```text
+# Pseudocode — framework-agnostic
+def step_every_result_matches(context, query):
+    for result in context.search_results:
+        assert query.lower() in result.name.lower()
+            or query.lower() in result.description.lower(),
+            f"Result '{result.name}' does not match '{query}'"
+```
+
+### Combining with Scenario Outlines
+
+Scenario Outlines are the natural Gherkin vehicle for property-based
+testing. Use named Examples blocks to organize inputs by category:
+
+```gherkin
+Rule: The pricing engine shall apply the correct discount tier based on order total.
+
+  Scenario Outline: Discount tier is correct for order total
+    Given a customer with no special promotions
+    When the customer places an order totaling $<total>
+    Then the discount should be <discount>%
+    And the final price should equal $<total> minus <discount>%
+
+    Examples: No discount (under $50)
+      | total | discount |
+      | 10.00 | 0        |
+      | 49.99 | 0        |
+
+    Examples: Silver tier ($50-$99.99)
+      | total | discount |
+      | 50.00 | 5        |
+      | 75.00 | 5        |
+
+    Examples: Gold tier ($100+)
+      | total  | discount |
+      | 100.00 | 10       |
+      | 500.00 | 10       |
+```
+
+The property being tested: the discount percentage is determined
+solely by which tier the order total falls into. The Then step
+verifies both the tier assignment and the arithmetic.
+
+---
+
 ## Background Blocks
 
 A `Background` runs before each scenario in its scope (feature or rule). It
