@@ -83,9 +83,14 @@ change, either the test is wrong or the behavior already exists.
 
 ### 5. Write or Update Step Definitions
 
-Implement step definition files for any new or changed steps. Consult
-`reference/step-definitions.md`.
+**Before writing any new step**, survey existing step files for steps
+that already cover the behavior or could be generalized to cover it.
+Consult `reference/step-definitions.md`.
 
+- **Search first.** Scan filenames in `given/`, `when/`, `then/`
+  for steps with similar wording. If an existing step could cover
+  the new case by adding a parameter, modify that step rather than
+  creating a duplicate.
 - **One step definition per file.**
 - **File named after its one step** in snake_case (e.g., a step
   `the shopping cart is empty` lives in

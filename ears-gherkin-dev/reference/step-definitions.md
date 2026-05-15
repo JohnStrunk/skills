@@ -332,6 +332,44 @@ queries) inside a step definition, push that logic down.
 
 ---
 
+## Survey Existing Steps Before Writing New Ones
+
+Before writing any new step definition, check for existing steps
+that already cover the behavior or could be generalized to cover it.
+Duplicate and near-duplicate steps are the single largest source of
+maintenance debt in BDD projects.
+
+### How to Survey
+
+1. **Scan filenames.** List the files in the relevant keyword
+   directory (`given/`, `when/`, `then/`). Because each file is
+   named after its step, the directory listing is a searchable
+   index of every step in the project.
+2. **Search for similar wording.** Look for steps with the same
+   verb or domain noun. A step like
+   `the user enters their "email"` might already exist as
+   `the user enters their "{field}"`.
+3. **Check for generalization opportunities.** If an existing step
+   does the same thing but for a specific case, consider adding a
+   parameter to make it general rather than writing a second step.
+   For example, if `a_registered_user.py` exists and you need a
+   step for an admin user, check whether the existing step can take
+   a role parameter instead of creating `an_admin_user.py`.
+4. **Run the audit script.** `scripts/audit.py` detects
+   near-duplicate filenames and flags them as consolidation
+   candidates.
+
+### When to Modify vs. Create
+
+- **Modify an existing step** when the new scenario needs the same
+  behavior with different data. Add a parameter to the existing
+  step and rename the file to reflect the generalized pattern.
+- **Create a new step** when the behavior is genuinely different,
+  not just the data. "the user uploads a photo" and "the user
+  enters their name" are different behaviors — keep them separate.
+
+---
+
 ## Parameterize Similar Steps
 
 The single most impactful practice for step definition
