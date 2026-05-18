@@ -47,10 +47,13 @@ The FSM framing explains several of the rules that follow:
   second transition, belonging in a separate scenario.
 
 **Boundary:** Gherkin specifies behavioral state transitions — what
-the system does in response to events in context. It is not suited
-for specifying visual aesthetics, layout, wireframes, or GUI
-artwork. Those are complementary artifacts (mockups, design specs,
-style guides) that inform step definitions but live outside the
+the system does in response to events in context. Many UI
+properties (contrast ratios, component states, responsive behavior)
+are testable state transitions and fit naturally into EARS/Gherkin
+through a component vocabulary pattern — see
+`reference/ui-style-guide-pattern.md`. Purely aesthetic properties
+that lack a pass/fail criterion (color harmony, spacing rhythm,
+illustration style) remain in design documentation outside the
 Gherkin specification.
 
 ---

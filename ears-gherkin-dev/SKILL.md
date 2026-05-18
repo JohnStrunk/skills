@@ -34,6 +34,9 @@ during each phase of the workflow:
 - `reference/step-definitions.md` — Step definition writing,
   parameterization, one-step-per-file organization, support layer
   patterns, and framework-specific conventions.
+- `reference/ui-style-guide-pattern.md` — Specifying UI component
+  appearance via EARS requirements, defining a component vocabulary,
+  and keeping visual details out of feature-level scenarios.
 - `reference/auditing.md` — What the audit script checks, how to
   read its output, and how to fix common findings.
 
