@@ -15,13 +15,9 @@ sudo /usr/local/share/docker-init.sh
 # Install Claude Code
 curl -fsSL https://claude.ai/install.sh | bash
 
-# Install coderabbit
-curl -fsSL https://cli.coderabbit.ai/install.sh | sh
-
 # Install python tools
+# shellcheck disable=SC2043
 for pkg in \
-    "dvc[gdrive,s3]" \
-    "harbor" \
     "ruff" \
     ; do
     uv tool install "$pkg"
@@ -30,10 +26,10 @@ done
 # Install npm tools
 npm install -g --no-fund \
     @google/gemini-cli \
-    markdownlint-cli \
-    @playwright/cli@latest \
-    skills
-npx -y playwright install --with-deps
+    markdownlint-cli
+    # @playwright/cli@latest
+
+# npx -y playwright install --with-deps
 
 # Install skills
 # https://skills.sh/
