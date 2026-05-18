@@ -120,10 +120,11 @@ Execute the scenarios and confirm they all pass.
 
 ### 8. Audit
 
-Run the audit script against the features directory:
+Run the audit script against the features directory. The script is
+at `scripts/audit.py` relative to this skill's directory:
 
 ```bash
-python scripts/audit.py features/
+python <this-skill>/scripts/audit.py features/
 ```
 
 Consult `reference/auditing.md` for interpreting results. Fix all

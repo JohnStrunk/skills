@@ -373,6 +373,7 @@ Is the requirement always active (no conditions)?
 | **should** | Advisory | Do not use — creates ambiguity. |
 | **may** | Permissive | Do not use in requirements. |
 | **will** | Intent | Do not use — confused with "shall". |
+| **must** | Mandatory (informal) | Do not use — use "shall" for consistency. |
 
 Always use "shall" for requirements. It signals a testable,
 mandatory obligation.

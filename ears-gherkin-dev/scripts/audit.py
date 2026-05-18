@@ -167,7 +167,8 @@ def _check_ears_pattern_structure(title: str) -> list[str]:
 
     if re.match(r"\s*if\b", lower):
         shall_pos = lower.find("shall")
-        then_pos = lower.find("then")
+        then_match = re.search(r"\bthen\b", lower)
+        then_pos = then_match.start() if then_match else -1
         if shall_pos != -1 and (then_pos == -1 or then_pos > shall_pos):
             errors.append(
                 "EARS 'If' pattern requires 'then' before 'shall' "
@@ -223,7 +224,8 @@ def audit_feature_file(file_path: str) -> int:
     # Line types
     rule_re = re.compile(r"^\s*Rule:\s*(.*)", re.IGNORECASE)
     scenario_re = re.compile(
-        r"^\s*(Scenario|Example|Scenario Outline):\s*(.*)", re.IGNORECASE
+        r"^\s*(Scenario Outline|Scenario Template|Scenario|Example):\s*(.*)",
+        re.IGNORECASE,
     )
 
     for line in lines:
@@ -268,6 +270,9 @@ def audit_feature_file(file_path: str) -> int:
                     "@",
                     "#",
                     "Background:",
+                    "Examples:",
+                    "Scenarios:",
+                    "|",
                 ]
             ):
                 current_rule["description"].append(clean_line)
@@ -449,7 +454,7 @@ def _ensure_steps_init(features_dir: str) -> list[str]:
 
     # Root steps __init__.py -- auto-imports subdirectories
     root_init = steps_dir / "__init__.py"
-    if not root_init.exists() or root_init.stat().st_size == 0:
+    if not root_init.exists():
         root_init.write_text(_STEPS_INIT_CONTENT)
         created.append(str(root_init))
 
@@ -631,7 +636,7 @@ def _find_step_files(features_dir: str, framework: str) -> list[str]:
                 # Skip __init__.py, environment.py, conftest.py, hooks files
                 if f.name in ("__init__.py", "environment.py", "conftest.py"):
                     continue
-                if "hooks" in f.name.lower():
+                if f.stem.lower() in ("hooks", "before_hooks", "after_hooks"):
                     continue
                 # Skip files in support directories
                 if "support" in f.parts:
@@ -684,24 +689,31 @@ def _check_multi_step_files(
 ) -> list[tuple[str, list[str]]]:
     """Detect files containing more than one step definition.
 
-    Uses dry-run JSON match locations to group steps by file.
+    Uses dry-run JSON match locations to group steps by source line.
+    A parameterized step definition matched by multiple step texts still
+    maps to a single source line, so it is correctly counted as one step.
     Returns list of (file_path, [step_texts]) for offending files.
     """
-    file_steps: dict[str, list[str]] = {}
+    file_lines: dict[str, dict[str, str]] = {}
     for feature in features_json:
         for element in feature.get("elements", []):
             for step in element.get("steps", []):
                 match = step.get("match")
                 if match and "location" in match:
                     loc = match["location"]
-                    file_path = loc.rsplit(":", 1)[0]
-                    keyword = step.get("keyword", "").strip()
-                    name = step.get("name", "")
-                    step_text = f"{keyword} {name}"
-                    if step_text not in file_steps.get(file_path, []):
-                        file_steps.setdefault(file_path, []).append(step_text)
+                    parts = loc.rsplit(":", 1)
+                    file_path = parts[0]
+                    line = parts[1] if len(parts) > 1 else "0"
+                    if file_path not in file_lines:
+                        file_lines[file_path] = {}
+                    if line not in file_lines[file_path]:
+                        keyword = step.get("keyword", "").strip()
+                        name = step.get("name", "")
+                        file_lines[file_path][line] = f"{keyword} {name}"
 
-    return [(fp, steps) for fp, steps in file_steps.items() if len(steps) > 1]
+    return [
+        (fp, list(lines.values())) for fp, lines in file_lines.items() if len(lines) > 1
+    ]
 
 
 # ---------------------------------------------------------------------------
@@ -795,7 +807,7 @@ def audit(
             for fpath in feature_files:
                 try:
                     total_errors += audit_feature_file(fpath)
-                except Exception as e:
+                except (OSError, UnicodeDecodeError) as e:
                     print(f"Error auditing {fpath}: {e}")
                     total_errors += 1
 
