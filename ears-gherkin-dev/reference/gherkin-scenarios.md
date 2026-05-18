@@ -13,6 +13,48 @@ story — no technical jargon, no implementation details, no incidental data.
 
 ---
 
+## Why Given/When/Then Works
+
+Every Gherkin scenario is a finite state machine transition:
+
+```text
+Given the system is in state X   →   current state
+When event Y occurs              →   input/trigger
+Then the system is in state Z    →   resulting state
+```
+
+This is not an analogy — it is a structural identity. The three
+Gherkin keywords map directly to the three elements of every FSM
+transition. Since every computable behavior can be expressed as a
+finite state machine, Given/When/Then is sufficient to specify any
+software system's behavior.
+
+This is also why the EARS general syntax
+(`While <precondition>, when <trigger>, the <system> shall <response>`)
+maps so naturally to Gherkin: EARS requirements describe state
+machine transitions, and Gherkin scenarios demonstrate them with
+concrete examples.
+
+The FSM framing explains several of the rules that follow:
+
+- **One scenario, one behavior** — because each scenario is one
+  transition.
+- **Given describes state, not actions** — because Given is the
+  current state of the machine, not an event.
+- **Then describes the resulting state** — because Then is the
+  state the machine moves to after the transition.
+- **No second When after a Then** — because that would be a
+  second transition, belonging in a separate scenario.
+
+**Boundary:** Gherkin specifies behavioral state transitions — what
+the system does in response to events in context. It is not suited
+for specifying visual aesthetics, layout, wireframes, or GUI
+artwork. Those are complementary artifacts (mockups, design specs,
+style guides) that inform step definitions but live outside the
+Gherkin specification.
+
+---
+
 ## Declarative vs. Imperative Style
 
 This is the most important stylistic choice. **Always use declarative style.**
@@ -142,23 +184,30 @@ When the user submits the search query
 - Describe *what* happens, not *how*
 - Avoid CSS selectors, API endpoints, or framework-specific details
 
-### Then — Verify the Outcome
+### Then — Verify the Resulting State
 
-The **expected outcome** — what an observer would see.
+The **resulting state** of the system after the transition — the
+state the machine has moved to. This may be directly observable (a
+message displayed, an item in a list) or a system state that can be
+queried (an account is locked, a subscription is active).
 
 ```gherkin
 # BAD: Checking implementation internals
 Then the database should have a new row in the orders table
 Then OrderService.processOrder() should have been called
 
-# GOOD: Checking observable outcomes
+# GOOD: Resulting state or observable effect
 Then the customer should receive an order confirmation
 Then the order should appear in the customer's order history
+Then the account should be locked for 30 minutes
 ```
 
-- Verify outputs observable by users or external systems
-- Avoid checking database state, internal variables, or method calls
-- Multiple Thens are fine for different aspects of the same outcome
+- Describe the state the system is now in, or the effect that
+  resulted from the transition
+- Verify through external observation, not internal implementation
+  details — avoid database tables, internal variables, or method calls
+- Multiple Thens are fine for different aspects of the same
+  resulting state
 
 ### Step Order
 
