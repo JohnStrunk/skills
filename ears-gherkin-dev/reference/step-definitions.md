@@ -29,33 +29,37 @@ type.
 
 ### Typical Layout
 
+The root directory for steps and the location of support modules
+vary by framework — see the framework conventions table below.
+This example shows a Behave (Python) project:
+
 ```text
 project/
 ├── features/                          ← .feature files
 │   ├── authentication.feature
 │   ├── shopping_cart.feature
-│   └── checkout.feature
-├── features/steps/                    ← Step definitions
-│   ├── given/                         ← All Given step files
-│   │   ├── a_registered_user.py
-│   │   ├── the_shopping_cart_is_empty.py
-│   │   └── the_shopping_cart_contains_items.py
-│   ├── when/                          ← All When step files
-│   │   ├── the_customer_adds_to_the_cart.py
-│   │   ├── the_customer_removes_from_the_cart.py
-│   │   └── the_user_logs_in.py
-│   └── then/                          ← All Then step files
-│       ├── the_cart_should_display_items.py
-│       ├── the_cart_total_should_be.py
-│       └── the_dashboard_should_appear.py
-├── support/                           ← Helper/support modules
-│   ├── pages/                         ← Page objects (UI testing)
-│   │   ├── login_page.py
-│   │   └── cart_page.py
-│   ├── api_client.py
-│   ├── database.py
-│   └── factories.py
-└── environment.py                     ← Hooks
+│   ├── checkout.feature
+│   └── steps/                         ← Step definitions (Behave)
+│       ├── given/                     ← All Given step files
+│       │   ├── a_registered_user.py
+│       │   ├── the_shopping_cart_is_empty.py
+│       │   └── the_shopping_cart_contains_items.py
+│       ├── when/                      ← All When step files
+│       │   ├── the_customer_adds_to_the_cart.py
+│       │   ├── the_customer_removes_from_the_cart.py
+│       │   └── the_user_logs_in.py
+│       ├── then/                      ← All Then step files
+│       │   ├── the_cart_should_display_items.py
+│       │   ├── the_cart_total_should_be.py
+│       │   └── the_dashboard_should_appear.py
+│       └── support/                   ← Helper/support modules
+│           ├── pages/                 ← Page objects (UI testing)
+│           │   ├── login_page.py
+│           │   └── cart_page.py
+│           ├── api_client.py
+│           ├── database.py
+│           └── factories.py
+└── environment.py                     ← Hooks (Behave)
 ```
 
 ### File Naming Convention

@@ -21,19 +21,22 @@ Specifically:
 
 ## Usage
 
+All paths below use `$SKILL` as shorthand for this skill's
+directory.
+
 ```bash
 # Audit everything (specs + steps)
-python scripts/audit.py features/
+python $SKILL/scripts/audit.py features/
 
 # Audit only .feature file structure
-python scripts/audit.py features/ --specs-only
+python $SKILL/scripts/audit.py features/ --specs-only
 
 # Audit only step definition files
-python scripts/audit.py features/ --steps-only
+python $SKILL/scripts/audit.py features/ --steps-only
 
 # Specify BDD framework (auto-detected if not given)
-python scripts/audit.py features/ --framework behave
-python scripts/audit.py features/ --framework cucumber-js
+python $SKILL/scripts/audit.py features/ --framework behave
+python $SKILL/scripts/audit.py features/ --framework cucumber-js
 ```
 
 The script exits with code 0 if all checks pass, 1 if any findings
@@ -51,7 +54,7 @@ EARS-Gherkin mapping rules:
 | Rule has exactly one "shall" | Missing or compound EARS requirements |
 | No wrong obligation keywords | "should", "may", "will", "must" in Rule titles |
 | No vague language | Unmeasurable adverbs, adjectives, quantifiers |
-| Correct EARS structure | Mismatched keywords (When for states, etc.) |
+| Correct EARS structure | Missing commas after While/When/Where clauses; missing "then" in If-then patterns |
 | Explicit system name | Pronouns ("it") before "shall" |
 | Clean Rule descriptions | Additional EARS requirements in freeform text |
 | Scenario coverage | Rules with no scenarios |
@@ -104,9 +107,9 @@ it.
 steps"** — Split into three files, one per step, each named after
 its step.
 
-**"NAMING: features/steps/given/step1.py should be
-the_shopping_cart_is_empty.py"** — Rename the file to match the
-step pattern it contains.
+**"NAMING: features/steps/given/step1.py:
+actual=step1, expected=the_shopping_cart_is_empty"** — Rename the
+file to match the step pattern it contains.
 
 **"75% similar: add_to_cart.py / add_item_to_cart.py"** — These
 may be candidates for consolidation into one parameterized step.

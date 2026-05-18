@@ -12,10 +12,20 @@
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css"
+      integrity="sha384-eFTL69TLRZTkNfYZOLM+G04821K1qZao/4QLJbet1pP4tcF+fdXq/9CdqAbWRl/L"  <!-- pragma: allowlist secret -->
+      crossorigin="anonymous"
     />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
+      integrity="sha384-RH2xi4eIQ/gjtbs9fUXM68sLSi99C7ZWBRX1vDrVv6GQXRibxXLbwO2NGZB74MbU"  <!-- pragma: allowlist secret -->
+      crossorigin="anonymous"
+    ></script>
     <!-- TypeScript is not in the common bundle; load it separately. -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/typescript.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/typescript.min.js"
+      integrity="sha384-df1w1nJ43GNwmgbSCrT8YFIYyqFAm+lzj+b6ofuziX8Cfdg9QHFwbORDgAaj//wi"  <!-- pragma: allowlist secret -->
+      crossorigin="anonymous"
+    ></script>
 
     <style>
       /* ── Reset & base typography ──────────────────────────────────────── */
@@ -640,6 +650,7 @@
         const feature = {
           name: "",
           description: "",
+          tags: [],
           children: [], // Section | Rule | Scenario (top-level)
         };
 
@@ -649,8 +660,10 @@
         let currentScenario = null;
         let pendingTags = [];
         let inDocString = false;
+        let docStringDelimiter = null;
         let docStringIndent = 0;
         let docStringLines = [];
+        let inExamples = false;
         let descLines = []; // accumulator for the current description block
 
         // Helper: flush the accumulated description into the right target
@@ -666,16 +679,15 @@
 
           // ── Doc string delimiters (""" or ```) ─────────────────────
           if (inDocString) {
-            if (trimmed === '"""' || trimmed === "```") {
-              // Close the doc string and attach it to the last step
+            if (trimmed === docStringDelimiter) {
               inDocString = false;
               const step = currentScenario?.steps?.at(-1);
               if (step) {
                 step.docString = docStringLines.join("\n");
               }
               docStringLines = [];
+              docStringDelimiter = null;
             } else {
-              // Preserve content, removing the original indentation level
               const deindented =
                 raw.length >= docStringIndent
                   ? raw.slice(docStringIndent)
@@ -687,6 +699,7 @@
 
           if (currentScenario && (trimmed === '"""' || trimmed === "```")) {
             inDocString = true;
+            docStringDelimiter = trimmed;
             docStringIndent = raw.indexOf(trimmed);
             docStringLines = [];
             continue;
@@ -701,32 +714,37 @@
           // ── Feature line ───────────────────────────────────────────
           if (trimmed.startsWith("Feature:")) {
             feature.name = trimmed.slice("Feature:".length).trim();
+            feature.tags = pendingTags.length ? [...pendingTags] : [];
+            pendingTags = [];
             inFeatureDesc = true;
             continue;
           }
 
           // ── Section comment (# ── Foo ──) ──────────────────────────
           //
-          // We treat lines starting with "# " inside a feature as
-          // visual section dividers. They appear in the rendered tree
-          // as subheadings that group rules.
-          if (trimmed.startsWith("#")) {
-            // Flush any pending description
+          // Only decorated comments containing box-drawing dashes (─)
+          // are treated as section headings. Plain Gherkin comments
+          // (e.g., "# a note") are ignored.
+          if (trimmed.startsWith("#") && trimmed.includes("─")) {
             if (inFeatureDesc) {
               feature.description = flushDescription();
               inFeatureDesc = false;
             }
             currentScenario = null;
+            inExamples = false;
 
-            // Strip comment marker, dashes, and whitespace
             const heading = trimmed
               .replace(/^#+\s*/, "")
               .replace(/─/g, "")
-              .replace(/──+/g, "")
               .trim();
             if (heading) {
               feature.children.push({ type: "section", name: heading });
             }
+            continue;
+          }
+
+          // ── Plain comments — skip ─────────────────────────────────
+          if (trimmed.startsWith("#")) {
             continue;
           }
 
@@ -748,6 +766,7 @@
               inFeatureDesc = false;
             }
             currentScenario = null;
+            inExamples = false;
             currentRule = {
               type: "rule",
               name: trimmed.slice("Rule:".length).trim(),
@@ -761,16 +780,33 @@
             continue;
           }
 
-          // ── Scenario / Scenario Outline line ───────────────────────
+          // ── Background line ───────────────────────────────────────
+          if (trimmed.startsWith("Background:")) {
+            if (inFeatureDesc) {
+              feature.description = flushDescription();
+              inFeatureDesc = false;
+            }
+            currentScenario = {
+              type: "background",
+              name: trimmed.slice("Background:".length).trim(),
+              tags: [],
+              steps: [],
+            };
+            inExamples = false;
+            continue;
+          }
+
+          // ── Scenario / Scenario Outline / Scenario Template ────────
           if (
+            trimmed.startsWith("Scenario Outline:") ||
+            trimmed.startsWith("Scenario Template:") ||
             trimmed.startsWith("Scenario:") ||
-            trimmed.startsWith("Scenario Outline:")
+            trimmed.startsWith("Example:")
           ) {
             if (inFeatureDesc) {
               feature.description = flushDescription();
               inFeatureDesc = false;
             }
-            // If we were accumulating a rule description, flush it now
             if (
               currentRule &&
               currentRule.scenarios.length === 0 &&
@@ -778,10 +814,16 @@
             ) {
               currentRule.description = flushDescription();
             }
+            inExamples = false;
 
-            const keyword = trimmed.startsWith("Scenario Outline:")
-              ? "Scenario Outline"
-              : "Scenario";
+            let keyword;
+            if (trimmed.startsWith("Scenario Outline:"))
+              keyword = "Scenario Outline";
+            else if (trimmed.startsWith("Scenario Template:"))
+              keyword = "Scenario Template";
+            else if (trimmed.startsWith("Scenario:")) keyword = "Scenario";
+            else keyword = "Example";
+
             const name = trimmed.slice(keyword.length + 1).trim();
             currentScenario = {
               type: "scenario",
@@ -794,9 +836,18 @@
             if (currentRule) {
               currentRule.scenarios.push(currentScenario);
             } else {
-              // Standalone scenario not inside a Rule block
               feature.children.push(currentScenario);
             }
+            continue;
+          }
+
+          // ── Examples / Scenarios block (inside Scenario Outline) ───
+          if (
+            currentScenario &&
+            (trimmed.startsWith("Examples:") ||
+              trimmed.startsWith("Scenarios:"))
+          ) {
+            inExamples = true;
             continue;
           }
 
@@ -805,7 +856,6 @@
             /^(Given|When|Then|And|But|\*)\s+(.*)/,
           );
           if (stepMatch && currentScenario) {
-            // If we were accumulating a rule description, flush it now
             if (
               currentRule &&
               currentRule.scenarios.length <= 1 &&
@@ -813,6 +863,7 @@
             ) {
               currentRule.description = flushDescription();
             }
+            inExamples = false;
 
             currentScenario.steps.push({
               keyword: stepMatch[1],
@@ -825,26 +876,26 @@
           if (trimmed.startsWith("|") && currentScenario) {
             const cells = trimmed
               .split("|")
-              .slice(1, -1) // remove leading/trailing empty strings
+              .slice(1, -1)
               .map((c) => c.trim());
 
-            const lastStep = currentScenario.steps.at(-1);
-            if (lastStep) {
-              if (!lastStep.table) lastStep.table = [];
-              lastStep.table.push(cells);
+            if (inExamples) {
+              if (!currentScenario.examples) currentScenario.examples = [];
+              currentScenario.examples.push(cells);
+            } else {
+              const lastStep = currentScenario.steps.at(-1);
+              if (lastStep) {
+                if (!lastStep.table) lastStep.table = [];
+                lastStep.table.push(cells);
+              }
             }
             continue;
           }
 
           // ── Description lines (anything else) ──────────────────────
-          //
-          // If we're in the feature description block or rule description
-          // block, accumulate lines.
           if (inFeatureDesc) {
             descLines.push(trimmed);
           } else if (currentRule && currentRule.scenarios.length === 0) {
-            // We're inside a Rule but before any Scenario — this is rule
-            // description text.
             descLines.push(trimmed);
           }
         }
@@ -1197,6 +1248,21 @@
           details.appendChild(stepsDiv);
         }
 
+        // Examples table (for Scenario Outlines)
+        if (scenario.examples?.length) {
+          const exDiv = document.createElement("div");
+          exDiv.className = "steps";
+          const label = document.createElement("div");
+          label.className = "step";
+          const kwSpan = document.createElement("span");
+          kwSpan.className = "kw-given";
+          kwSpan.textContent = "Examples";
+          label.appendChild(kwSpan);
+          exDiv.appendChild(label);
+          exDiv.appendChild(renderDataTable(scenario.examples));
+          details.appendChild(exDiv);
+        }
+
         return details;
       }
 
@@ -1330,20 +1396,25 @@
         for (const node of nodes) {
           const text = node.textContent;
           const lower = text.toLowerCase();
-          const idx = lower.indexOf(query);
-          if (idx === -1) continue;
-
-          // Split the text node around the match and insert a <mark>
-          const before = text.slice(0, idx);
-          const match = text.slice(idx, idx + query.length);
-          const after = text.slice(idx + query.length);
+          if (!lower.includes(query)) continue;
 
           const frag = document.createDocumentFragment();
-          if (before) frag.appendChild(document.createTextNode(before));
-          const mark = document.createElement("mark");
-          mark.textContent = match;
-          frag.appendChild(mark);
-          if (after) frag.appendChild(document.createTextNode(after));
+          let cursor = 0;
+          let idx;
+          while ((idx = lower.indexOf(query, cursor)) !== -1) {
+            if (idx > cursor) {
+              frag.appendChild(
+                document.createTextNode(text.slice(cursor, idx)),
+              );
+            }
+            const mark = document.createElement("mark");
+            mark.textContent = text.slice(idx, idx + query.length);
+            frag.appendChild(mark);
+            cursor = idx + query.length;
+          }
+          if (cursor < text.length) {
+            frag.appendChild(document.createTextNode(text.slice(cursor)));
+          }
 
           node.parentNode.replaceChild(frag, node);
         }
@@ -1469,21 +1540,11 @@
       function balancedSplit(html) {
         const raw = html.split("\n");
         const result = [];
-        // Stack of open span tags carried across lines
         let openTags = [];
 
         for (const line of raw) {
-          // Re-open any spans that were left open from the previous line
-          let prefix = openTags.join("");
-          let working = prefix + line;
+          const prefix = openTags.join("");
 
-          // Track which spans are opened/closed on this line to update
-          // the carry-forward stack
-          const opens = [...line.matchAll(/<span[^>]*>/g)].map((m) => m[0]);
-          const closes = [...line.matchAll(/<\/span>/g)];
-
-          // Update the open-tags stack: each </span> pops the last open,
-          // each <span> pushes a new one
           let stack = [...openTags];
           const tokens = line.match(/<span[^>]*>|<\/span>/g) || [];
           for (const tok of tokens) {
@@ -1495,8 +1556,7 @@
           }
           openTags = stack;
 
-          // Close any still-open spans at the end of this line
-          let suffix = "</span>".repeat(openTags.length);
+          const suffix = "</span>".repeat(openTags.length);
           result.push(prefix + line + suffix);
         }
         return result;
@@ -1553,17 +1613,24 @@
             f.name.endsWith(".feature"),
           );
 
+          const stepDefExts = [".ts", ".js", ".mjs", ".cjs"];
+          const stepDefDirs = ["step_definitions/", "steps/"];
           const stepDefFiles = allFiles.filter((f) => {
             const path = f.webkitRelativePath || f.name;
-            return f.name.endsWith(".ts") && path.includes("step_definitions/");
+            return (
+              stepDefExts.some((ext) => f.name.endsWith(ext)) &&
+              stepDefDirs.some((dir) => path.includes(dir))
+            );
           });
 
           // ── Read all files in parallel ───────────────────────────────
 
           const readFile = (file) =>
-            new Promise((resolve) => {
+            new Promise((resolve, reject) => {
               const reader = new FileReader();
               reader.onload = () => resolve({ file, text: reader.result });
+              reader.onerror = () =>
+                reject(new Error(`Failed to read ${file.name}`));
               reader.readAsText(file);
             });
 

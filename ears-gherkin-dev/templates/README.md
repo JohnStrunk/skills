@@ -75,7 +75,7 @@ The audit script checks both specification quality and step definition
 hygiene:
 
 ```bash
-python scripts/audit.py features/
+python <path-to-ears-gherkin-dev-skill>/scripts/audit.py features/
 ```
 
 It catches common problems like vague language in requirements, missing step
