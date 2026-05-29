@@ -1,6 +1,10 @@
-#! /bin/sh
+#! /bin/bash
 
-set -e
+set -e -x -o pipefail
+
+# Log output to a file for debugging
+LOG_FILE="/tmp/install-packages.log"
+exec > >(tee -a "$LOG_FILE") 2>&1
 
 cd "$(dirname "$0")"
 
@@ -11,6 +15,9 @@ sudo service docker stop || true
 sudo pkill -x dockerd || true
 sudo pkill -x containerd || true
 sudo /usr/local/share/docker-init.sh
+
+# Install Antigravity CLI
+curl -fsSL https://antigravity.google/cli/install.sh | bash
 
 # Install Claude Code
 curl -fsSL https://claude.ai/install.sh | bash
@@ -25,9 +32,8 @@ done
 
 # Install npm tools
 npm install -g --no-fund \
-    @google/gemini-cli \
-    markdownlint-cli
-    # @playwright/cli@latest
+    markdownlint-cli2
+    # @playwright/cli
 
 # npx -y playwright install --with-deps
 
@@ -42,8 +48,8 @@ for skill in \
     skillname="$(echo "$skill" | cut -d '@' -f 2)"
     ( cd .. && \
     npx -y skills install "$source" --yes \
+        --agent antigravity \
         --agent claude-code \
-        --agent gemini-cli \
         --agent opencode \
         --skill "$skillname"
     )
