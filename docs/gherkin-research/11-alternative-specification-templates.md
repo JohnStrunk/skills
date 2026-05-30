@@ -46,8 +46,8 @@ categories:
 
 - **Liability** uses modal verbs: SHALL (mandatory), SHOULD (desired),
   WILL (recommendation)
-- Example: *"The document editor shall provide the user with the
-  ability to create new documents."*
+- Example: _"The document editor shall provide the user with the
+  ability to create new documents."_
 
 **PropertyMASTeR** (non-functional / quality requirements):
 
@@ -55,7 +55,7 @@ categories:
 [<condition>] <characteristic> of <subject matter> <liability> [<qualifying expression>] <value>
 ```
 
-- Example: *"The design of the website should be responsive."*
+- Example: _"The design of the website should be responsive."_
 
 **EnvironmentMASTeR** (technological environment requirements):
 
@@ -63,8 +63,8 @@ categories:
 [<condition>] <system> <liability> be designed in a way <environment constraint>
 ```
 
-- Example: *"The charger shall be designed so the system operates in
-  a 100-240V/50-60Hz range."*
+- Example: _"The charger shall be designed so the system operates in
+  a 100-240V/50-60Hz range."_
 
 **ProcessMASTeR** (process requirements):
 
@@ -72,8 +72,8 @@ categories:
 [<condition>] <actor> <liability> <process verb> <object>
 ```
 
-- Example: *"Software developers should work according to the
-  Personal Software Process."*
+- Example: _"Software developers should work according to the
+  Personal Software Process."_
 
 **Condition sub-templates:**
 
@@ -92,8 +92,8 @@ notes potential for ambiguity due to structural rigidity.
 
 **References:**
 
-- Chris Rupp and die SOPHISTen, *Requirements Templates -- The
-  Blueprint of your Requirement*, SOPHIST GmbH, 2014
+- Chris Rupp and die SOPHISTen, _Requirements Templates -- The
+  Blueprint of your Requirement_, SOPHIST GmbH, 2014
 - [IREB Foundation Level Handbook][ireb-handbook]
 - [Fran Caballero's Requirements Generator][fran-gen] (interactive
   tool supporting both MASTeR and EARS)
@@ -140,7 +140,7 @@ quality.
 
 ## 3. Boilerplates (Hull et al.)
 
-**Origin:** Hull, Jackson, and Dick, *Requirements Engineering* (2010).
+**Origin:** Hull, Jackson, and Dick, _Requirements Engineering_ (2010).
 The term "boilerplate" is used broadly in RE to describe any
 fixed-format template, but Hull et al. formalized a specific
 pattern-based approach.
@@ -184,7 +184,7 @@ chosen. No standardized set: teams must curate their own.
 
 **References:**
 
-- Hull, Jackson, Dick, *Requirements Engineering*, Springer, 2010
+- Hull, Jackson, Dick, _Requirements Engineering_, Springer, 2010
 - [Arora et al., "Requirement Boilerplates" (PDF)][boilerplates-pdf]
 - [Ontology + boilerplates tool (Springer 2023)][onto-boilerplates]
 
@@ -193,7 +193,7 @@ chosen. No standardized set: teams must curate their own.
 ## 4. Planguage (Tom Gilb)
 
 **Origin:** Tom Gilb, first described ~1988, fully elaborated in
-*Competitive Engineering* (Butterworth-Heinemann, 2005).
+_Competitive Engineering_ (Butterworth-Heinemann, 2005).
 
 ### Quantification-Driven Design
 
@@ -242,7 +242,7 @@ widely adopted than EARS in safety-critical domains.
 
 **References:**
 
-- Tom Gilb, *Competitive Engineering*, Butterworth-Heinemann, 2005
+- Tom Gilb, _Competitive Engineering_, Butterworth-Heinemann, 2005
 - [How to Quantify Quality (methodsandtools.com)][gilb-quantify]
 - [Planguage guide (malotaux.eu)][planguage-guide]
 
@@ -292,14 +292,14 @@ EARS. Prototype tool, not widely adopted in industry.
 ## 6. RELAX
 
 **Origin:** Jon Whittle, Pete Sawyer, Nelly Bencomo, Betty H.C. Cheng,
-Jean-Michel Bruel. Published in *Requirements Engineering* journal,
+Jean-Michel Bruel. Published in _Requirements Engineering_ journal,
 2010.
 
 ### Uncertainty-Aware Requirements
 
 A requirements language for **self-adaptive systems** that explicitly
 addresses **uncertainty**. Standard SHALL statements assume
-deterministic behavior; RELAX allows requirements to be *relaxed*
+deterministic behavior; RELAX allows requirements to be _relaxed_
 under adverse conditions.
 
 ### Uncertainty Operators
@@ -342,7 +342,7 @@ complex than EARS. Limited industry adoption.
 
 **References:**
 
-- [Whittle et al., *RE* 2010 (Springer)][relax-springer]
+- [Whittle et al., _RE_ 2010 (Springer)][relax-springer]
 - [Original RE'09 paper (PDF)][relax-pdf]
 
 ---
@@ -360,11 +360,11 @@ first-order logic (discourse representation structures).
 
 ### ACE Syntax Rules
 
-- Every noun requires a determiner: *"A customer inserts a card"*
-  (not *"Customers insert cards"*)
-- Attachment is verb-first: *"A customer inserts a card with a code"*
+- Every noun requires a determiner: _"A customer inserts a card"_
+  (not _"Customers insert cards"_)
+- Attachment is verb-first: _"A customer inserts a card with a code"_
   means the code is used for insertion, not that the card has a code
-- Coordination: *and* has higher precedence than *or*
+- Coordination: _and_ has higher precedence than _or_
 - Quantifier scope fixed by word order
 - Supports declarative sentences, queries (yes/no and wh-), and
   commands

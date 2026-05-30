@@ -14,7 +14,7 @@ and machine-executable.
 **EARS** provides sentence templates for requirements. Each requirement
 follows a pattern like:
 
-> *When* \<trigger\>, *the system shall* \<response\>.
+> _When_ \<trigger\>, _the system shall_ \<response\>.
 
 This eliminates vague language and forces every requirement to state exactly
 one testable behavior. The six EARS patterns (ubiquitous, event-driven,
@@ -49,7 +49,7 @@ features/
 
 Each `.feature` file groups related requirements under a single `Feature:`
 heading. Within a file, each EARS requirement is a `Rule:` block whose title
-*is* the requirement. Scenarios underneath a Rule verify that the
+_is_ the requirement. Scenarios underneath a Rule verify that the
 requirement holds.
 
 Step definitions live in one-file-per-step form, organized by keyword

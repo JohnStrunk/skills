@@ -15,7 +15,7 @@ surrounding framework
 The aidoc-flow-framework implements an **AI-First
 Specification-Driven Development** methodology where AI agents
 (Claude Code, Gemini CLI, GitHub Copilot) are the primary
-operators. Humans work *through* AI assistants. The framework's
+operators. Humans work _through_ AI assistants. The framework's
 core principle is **"formalize before implementing"** -- every
 line of code must trace back to business requirements through a
 chain of progressively more detailed specification artifacts.
@@ -402,10 +402,10 @@ Then response time is less than @threshold:PRD.035.perf.api.p95_latency
 
 | Category | BDD Usage | Example Key |
 | -------- | --------- | ----------- |
-| `perf.*` | Performance validation | `perf.api.p95_latency` |
-| `sla.*` | SLA validation | `sla.uptime.target` |
-| `limit.*` | Rate limit testing | `limit.api.requests_per_second` |
-| `timeout.*` | Timeout validation | `timeout.request.sync` |
+| `perf._` | Performance validation | `perf.api.p95_latency` |
+| `sla._` | SLA validation | `sla.uptime.target` |
+| `limit._` | Rate limit testing | `limit.api.requests_per_second` |
+| `timeout._` | Timeout validation | `timeout.request.sync` |
 
 ### Cumulative Tagging Requirements
 
@@ -541,7 +541,7 @@ until validation passes with 0 errors.
 
 ### Reserved ID Exemption
 
-Documents with ID `BDD-00_*` (index, traceability matrix,
+Documents with ID `BDD-00__` (index, traceability matrix,
 glossaries) are fully exempt from validation.
 
 ### Tag Format Convention
@@ -560,7 +560,7 @@ glossaries) are fully exempt from validation.
 The most complex of the satellite skills. It orchestrates a
 5-phase pipeline:
 
-**Phase 1: EARS Analysis** -- Read EARS documents, extract
+**_Phase 1: EARS Analysis_** -- Read EARS documents, extract
 statements, categorize by type, identify quality attributes,
 extract threshold references.
 
@@ -803,11 +803,11 @@ Delta reporting compares scores between review versions.
 All quantitative values are externalized to a PRD-managed threshold registry:
 
 - Format: `@threshold:PRD.NN.category.subcategory.key`
-- Categories: `perf.*`, `sla.*`, `limit.*`, `timeout.*`,
-  `retry.*`, `circuit.*`, `cache.*`
+- Categories: `perf._`, `sla._`, `limit._`, `timeout._`,
+  `retry._`, `circuit._`, `cache._`
 - No hardcoded "magic numbers" allowed in any artifact
 - ADR layer can define architecture-specific thresholds
-  with `@threshold:ADR.NN.*`
+  with `@threshold:ADR.NN._`
 
 ### 6. Mandatory Validation Loops
 

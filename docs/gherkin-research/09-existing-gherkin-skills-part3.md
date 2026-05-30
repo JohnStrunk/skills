@@ -787,8 +787,8 @@ No multi-phase workflow. Operates in "specification mode" where it:
 
 ### Automation (create-specification)
 
-- **Generates files**: Yes, creates `spec-*.md` files in `/spec/`
-- **Runs commands**: No (but has access to VS Code tools)
+- **Generates files**: Yes, creates `spec-_.md` files in `/spec/`
+- **_Runs commands_**: No (but has access to VS Code tools)
 - **Provides guidance**: Yes, via template structure
 
 ### Key Instructions (create-specification)

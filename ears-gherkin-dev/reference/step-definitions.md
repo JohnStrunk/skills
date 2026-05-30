@@ -149,12 +149,12 @@ Also include an empty `__init__.py` in each keyword subdirectory.
 #### Godog (Go) — One Step Per File
 
 Godog (`github.com/cucumber/godog`) is the official Cucumber
-framework for Go. Step definitions live in `*_test.go` files and
+framework for Go. Step definitions live in `__test.go` files and
 are registered via an `InitializeScenario` function. This requires
 a slightly different approach to one-step-per-file than
 decorator-based frameworks.
 
-**Directory layout:**
+**_Directory layout:_**
 
 ```text
 project/
@@ -229,10 +229,10 @@ func TestFeatures(t *testing.T) {
 }
 ```
 
-Adding a new step means creating a new `*_test.go` file and adding
+Adding a new step means creating a new `__test.go` file and adding
 one registration line to `InitializeScenario`.
 
-**State management in Go:** Godog uses Go's `context.Context` with
+**_State management in Go:_** Godog uses Go's `context.Context` with
 typed keys rather than a world object. Each step receives the
 context and returns an updated copy:
 
@@ -380,14 +380,14 @@ The single most impactful practice for step definition
 maintainability. When multiple steps differ only by a noun, value,
 or label, consolidate them into one parameterized step definition.
 
-### Why It Matters
+### Why Parameterization Matters
 
 Every distinct step definition is code that must be maintained,
 tested, and kept consistent. Three steps that do the same thing
 with different nouns means three places to update when the
 underlying behavior changes. One parameterized step means one.
 
-### Before and After
+### Parameterization Before and After
 
 **Before — three near-identical step definitions (Python/Behave):**
 
@@ -477,7 +477,7 @@ func theOrderStatusIs(ctx context.Context, status string) (context.Context, erro
 
 ### When NOT to Parameterize
 
-Keep steps separate when the *behavior* differs, not just the
+Keep steps separate when the _behavior_ differs, not just the
 data:
 
 ```python
@@ -716,7 +716,7 @@ Step definitions are identified by their pattern (regex or
 expression), but the function/method name still matters for code
 readability and debugging.
 
-### Guidelines
+### Naming Guidelines
 
 - Name the function after the behavior it implements, not the
   step text verbatim.
@@ -914,7 +914,7 @@ inter-step communication.
 | **SpecFlow** | `ScenarioContext` / constructor injection | Per-scenario |
 | **Godog** (Go) | `context.Context` with typed keys | Per-scenario |
 
-### Guidelines
+### State Management Guidelines
 
 - **Use the framework's state mechanism.** Do not use module-level
   globals, class-level variables, or file-based state.
@@ -993,15 +993,14 @@ When multiple teams contribute scenarios and steps:
 
 ## Anti-Patterns
 
-### Near-Duplicate Steps
+### Duplicate/Similar Steps
 
-**Problem:** Multiple step definitions with nearly identical
-patterns and bodies, differing only by a noun, value, or minor
-wording. Each duplicate adds maintenance cost and increases the
-chance of inconsistency when one is updated and the others are
-not.
+**Problem:** Multiple steps perform the same or nearly the
+same action, differing only in minor details or phrasing, but are
+implemented as separate step definitions. This violates the DRY (Don't
+Repeat Yourself) principle and leads to a bloated codebase.
 
-#### How to Spot It
+#### How to Spot Duplicate Steps
 
 - Two or more step definitions whose patterns share the same
   structure
@@ -1009,7 +1008,7 @@ not.
 - A step file where several definitions call the same method with
   different hard-coded arguments
 
-#### Before
+#### Before (Duplicate Steps)
 
 ```python
 @then('the success notification should be displayed')
@@ -1044,7 +1043,7 @@ it harder to detect unused code. With one step per file, an unused
 step is an unused file — immediately visible in a directory
 listing or audit.
 
-#### How to Spot It
+#### How to Spot Multiple Steps Per File
 
 - Any step file with more than one `@given`, `@when`, or `@then`
   decorator
@@ -1052,14 +1051,14 @@ listing or audit.
   (e.g., `authentication_steps.py` instead of
   `the_user_logs_in.py`)
 
-#### Before
+#### Before (Multiple Steps Per File)
 
 ```text
 steps/
   all_steps.py        ← 200+ step definitions covering everything
 ```
 
-#### After
+#### After (Multiple Steps Per File)
 
 ```text
 features/steps/
@@ -1086,7 +1085,7 @@ expressions — instead of delegating to a support layer. This
 couples every step to the current implementation and breaks steps
 whenever the UI, API, or database changes.
 
-#### How to Spot It
+#### How to Spot Implementation Leakage
 
 - Selenium/Playwright selectors in step bodies
 - Raw SQL or ORM queries in step bodies
@@ -1094,7 +1093,7 @@ whenever the UI, API, or database changes.
   etc.)
 - Framework-specific API calls (Spring beans, Rails models)
 
-#### Before (JS/Cucumber)
+#### Before (Implementation Leakage)
 
 ```javascript
 Given('a product named {string} exists', async function (name) {
@@ -1107,7 +1106,7 @@ Given('a product named {string} exists', async function (name) {
 });
 ```
 
-#### After
+#### After (Implementation Leakage)
 
 ```javascript
 Given('a product named {string} exists', async function (name) {
@@ -1125,14 +1124,14 @@ state, performs an action, and asserts an outcome, all in one.
 This makes steps unreusable and violates the Given/When/Then
 separation.
 
-#### How to Spot It
+#### How to Spot Overloaded Steps
 
 - A `Given` step that also clicks buttons or submits forms
 - A `When` step that also contains assertions
 - A step body longer than ~10 lines
 - A step that calls both setup methods and assertion methods
 
-#### Before
+#### Before (Overloaded Steps)
 
 ```python
 @when('the user logs in and sees the dashboard')
@@ -1143,7 +1142,7 @@ def step_login_and_dashboard(context):
     assert context.dashboard.welcome_message() == "Welcome, Alice"
 ```
 
-#### After
+#### After (Overloaded Steps)
 
 ```python
 @when('the user logs in with valid credentials')
@@ -1170,7 +1169,7 @@ framework's context or world object. This creates hidden
 dependencies and makes steps fail when reordered or used in new
 scenarios.
 
-#### How to Spot It
+#### How to Spot Tight Coupling
 
 - Steps that read module-level variables set by other steps
 - Steps that assume a previous step set up specific page state or
@@ -1178,7 +1177,7 @@ scenarios.
 - Steps that break when moved to a different scenario
 - A step comment saying "must run after step X"
 
-#### Before
+#### Before (Tight Coupling)
 
 ```python
 # Module-level variable shared between steps — fragile
@@ -1195,7 +1194,7 @@ def step_order_confirmation(context):
     assert context.email.was_sent_for(_last_created_order.id)
 ```
 
-#### After
+#### After (Tight Coupling)
 
 ```python
 @when('the customer places an order')
@@ -1237,14 +1236,14 @@ simpler alternatives (Cucumber Expressions, parse patterns) would
 do the same job more readably. Overly complex regex patterns are
 hard to understand, error-prone, and hostile to contributors.
 
-#### How to Spot It
+#### How to Spot It (Regex)
 
 - Regexes with multiple lookaheads, lookbehinds, or nested groups
 - Patterns that try to match many different phrasings in a single
   regex
 - Developers unable to tell what step text a pattern matches
 
-#### Before
+#### Before (Regex Overengineering)
 
 ```ruby
 Given(/^(?:the |a )?(?:registered |existing )?user (?:named |called )?["']?(\w+)["']?(?: exists)?$/i) do |name|
@@ -1252,7 +1251,7 @@ Given(/^(?:the |a )?(?:registered |existing )?user (?:named |called )?["']?(\w+)
 end
 ```
 
-#### After
+#### After (Regex Overengineering)
 
 ```ruby
 Given('a registered user named {string}') do |name|
@@ -1271,13 +1270,13 @@ more valuable than flexible ones.
 asserts anything. This means the scenario can pass even when the
 expected behavior does not occur.
 
-#### How to Spot It
+#### How to Spot Assertion-Free Then Steps
 
 - `Then` steps with no assertion or expectation calls
 - `Then` steps that only log, print, or navigate
 - Scenarios that never fail (always green regardless of behavior)
 
-#### Before
+#### Before (Assertion-Free Then Steps)
 
 ```python
 @then('the report should be generated')
@@ -1287,7 +1286,7 @@ def step_report_generated(context):
     # No assertion — this step always passes
 ```
 
-#### After
+#### After (Assertion-Free Then Steps)
 
 ```python
 @then('the report should be generated')
@@ -1305,14 +1304,14 @@ contain empty bodies or trivially-passing logic (`pass`,
 and compile without errors, but they let scenarios pass without
 testing anything — hiding the fact that implementation is missing.
 
-#### How to Spot It
+#### How to Spot Silent Stub Steps
 
 - Step bodies that are empty or contain only `pass`
 - `Then` steps with `assert True` or no assertion at all
 - Steps whose body is a comment like `# TODO: implement`
 - Scenarios that pass unexpectedly early in development
 
-#### Before
+#### Before (Silent Stub Steps)
 
 ```python
 @when('the customer checks out')
@@ -1326,7 +1325,7 @@ When('the customer checks out', function () {
 });
 ```
 
-#### After
+#### After (Silent Stub Steps)
 
 ```python
 @when('the customer checks out')
@@ -1356,13 +1355,13 @@ the full list of markers by framework.
 **Problem:** Step patterns embed specific test data values, making
 the step usable only for that exact case.
 
-#### How to Spot It
+#### How to Spot Hard-Coded Test Data
 
 - Step patterns that mention specific names, IDs, or values
 - Steps that work for one scenario but cannot be reused with
   different data
 
-#### Before
+#### Before (Hard-Coded Test Data)
 
 ```java
 @Given("Alice has a premium account")
@@ -1376,7 +1375,7 @@ public void bobHasBasicAccount() {
 }
 ```
 
-#### After
+#### After (Hard-Coded Test Data)
 
 ```java
 @Given("{string} has a {word} account")

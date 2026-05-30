@@ -49,9 +49,9 @@ From the
 [authoritative EARS page](https://alistairmavin.com/ears/)
 maintained by EARS creator Alistair Mavin:
 
-> *"The Easy Approach to Requirements Syntax (EARS) is
+> _"The Easy Approach to Requirements Syntax (EARS) is
 > a mechanism to gently constrain textual
-> requirements."*
+> requirements."_
 
 EARS provides structured guidance using a small set of
 keywords and sentence templates that enable authors to
@@ -337,7 +337,7 @@ system response to **undesired situations** such as
 errors, failures, faults, disturbances, or boundary
 violations. The keywords **If** and **then** distinguish
 these from event-driven requirements -- the "If" signals
-that the condition is *undesirable* rather than a normal
+that the condition is _undesirable_ rather than a normal
 operational trigger.
 
 **When to use:** For error handling, fault tolerance,
@@ -1249,7 +1249,7 @@ eliminate:
    decide to change their password..."
 
 7. **Inappropriate Implementation** -- The requirement
-   specifies *how* instead of *what*. Example: "The
+   specifies _how_ instead of _what_. Example: "The
    system shall use a linked list to maintain the
    transaction queue."
 
@@ -1849,7 +1849,7 @@ and direct:
 ### The Key Difference
 
 **EARS** operates at the **requirements** level -- it
-states what the system *shall* do. It is a contract
+states what the system _shall_ do. It is a contract
 between stakeholders and engineers.
 
 **Gherkin** operates at the **behavior specification**

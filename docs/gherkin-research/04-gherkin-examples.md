@@ -175,7 +175,7 @@ Feature: Is it Friday yet?
       | anything else! | Nope   |
 ```
 
-*Source: [Cucumber 10-Minute Tutorial](https://cucumber.io/docs/guides/10-minute-tutorial/)*
+_Source: [Cucumber 10-Minute Tutorial](https://cucumber.io/docs/guides/10-minute-tutorial/)_
 
 ---
 
@@ -616,7 +616,7 @@ Feature: Highlander
       And the phoenix ninja is reborn
 ```
 
-*Source: [Cucumber Gherkin Reference](https://cucumber.io/docs/gherkin/reference/)*
+_Source: [Cucumber Gherkin Reference](https://cucumber.io/docs/gherkin/reference/)_
 
 ### 3.4 Doc Strings with Content Types
 
@@ -1071,7 +1071,7 @@ Feature: User login
 - Implementation details live in step definitions, where they belong
 - Shorter and easier to maintain
 
-*Source: [Cucumber -- Better Gherkin](https://cucumber.io/docs/bdd/better-gherkin/)*
+_Source: [Cucumber -- Better Gherkin](https://cucumber.io/docs/bdd/better-gherkin/)_
 
 ### 5.2 Multiple Behaviors vs Single Behavior
 
@@ -1112,7 +1112,7 @@ rule of BDD. The second scenario uses the result of the first
 as its Given (precondition), creating a clear chain without
 coupling.
 
-*Source: [Automation Panda -- BDD 101](https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/)*
+_Source: [Automation Panda -- BDD 101](https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/)_
 
 ### 5.3 Inconsistent vs Consistent Language
 
@@ -1146,7 +1146,7 @@ Scenario: Search results display multiple content types
   And the results page shows video links for "panda"
 ```
 
-*Source: [Automation Panda -- BDD 101](https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/)*
+_Source: [Automation Panda -- BDD 101](https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/)_
 
 ### 5.4 Hardcoded Duplication vs Scenario Outline
 
@@ -1184,7 +1184,7 @@ Feature: Mario controls
       | B      |
 ```
 
-*Source: [Automation Panda -- BDD 101](https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/)*
+_Source: [Automation Panda -- BDD 101](https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/)_
 
 ### 5.5 Poor Style vs Professional Style
 
@@ -1233,7 +1233,7 @@ Feature: Google search suggestions
       | elephant | Elephant Man  |
 ```
 
-*Source: [Automation Panda -- BDD 101](https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/)*
+_Source: [Automation Panda -- BDD 101](https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/)_
 
 ### 5.6 Testing Implementation vs Testing Behavior
 
@@ -1679,8 +1679,8 @@ Feature: [Process] wizard
   <https://automationpanda.com/2017/01/30/bdd-101-writing-good-gherkin/>
   Comprehensive guide with good vs bad examples and anti-patterns.
 - **BDD Books** (by Seb Rose and Gaspar Nagy):
-  - *Discovery* -- exploring behavior using examples
-  - *Formulation* -- expressing examples as Given/When/Then
+  - _Discovery_ -- exploring behavior using examples
+  - _Formulation_ -- expressing examples as Given/When/Then
   <https://www.bddbooks.com/>
 
 ### Anti-Pattern Summary

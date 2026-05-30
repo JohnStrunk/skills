@@ -35,7 +35,7 @@ dual purpose: they are both **human-readable specifications** and
 to automated tests that run regularly, they create a "living" record of how the
 system works, always reflecting its current state.
 
-Gojko Adzic defined Living Documentation in his book *Specification by Example*
+Gojko Adzic defined Living Documentation in his book _Specification by Example_
 as "a source of information about system functionality that's as reliable as
 programming language code but much easier to access and understand."
 
@@ -164,7 +164,7 @@ Scenario: Successful login
   And the element "#welcome-message" should contain "Welcome, Alice"
 ```
 
-The first version specifies *what*. The second specifies *how* (and will break
+The first version specifies _what_. The second specifies _how_ (and will break
 the moment the UI changes).
 
 ---
@@ -227,7 +227,7 @@ writing Gherkin as test scripts miss the most valuable part of the process.
 
 ### The Two Layers of Executable Specification
 
-As Kamil Nicieja describes in *Writing Great Specifications*, an executable
+As Kamil Nicieja describes in _Writing Great Specifications_, an executable
 specification has two layers:
 
 1. **The specification layer**: The document you read when you want to know what
@@ -292,7 +292,7 @@ priorities differ:
 
 | Aspect         | Good Specification                   | Good Test                              |
 |----------------|--------------------------------------|----------------------------------------|
-| **Focus**      | *What* the system does (behavior)    | *Whether* the system does it correctly |
+| **Focus**      | _What_ the system does (behavior)    | _Whether_ the system does it correctly |
 | **Audience**   | Business stakeholders, developers    | Developers, testers, CI pipelines      |
 | **Language**   | Declarative, business-readable       | Concrete examples with specific data   |
 | **Durability** | Resilient to implementation changes  | Sensitive to behavioral changes        |
@@ -321,7 +321,7 @@ When writing feature files as specifications, follow these principles:
 
 4. **Use the feature description to capture context**. The free-text area
    between the `Feature:` line and the first scenario (or rule) is a
-   "specification brief" --- use it to explain *why* the feature exists, who it
+   "specification brief" --- use it to explain _why_ the feature exists, who it
    is for, and what business problem it solves.
 
 5. **Feature files should be small and focused**. Convention: one feature per
@@ -419,7 +419,7 @@ A practical workflow:
 4. **Sprint start**: Feature files are already written. Developers know what to
    build. Testers know what to verify. There is no ambiguity.
 
-Writing formal Gherkin *during* the Three Amigos session is generally
+Writing formal Gherkin _during_ the Three Amigos session is generally
 discouraged --- it can distract from the true purpose of building shared
 understanding. The exception is early in a project when the team is still
 developing its ubiquitous language.
@@ -768,7 +768,7 @@ This relationship is critical to specification quality:
 - **Without examples, a rule may be ambiguous**. Abstract rules are open to
   interpretation. Concrete examples pin down exactly what the rule means.
 - **Without a rule, an example lacks context**. A scenario floating on its own
-  does not tell you *why* that behavior matters or what business rule it
+  does not tell you _why_ that behavior matters or what business rule it
   illustrates.
 - **Together, they fully specify expected behavior** and guide the development
   team's efforts.
@@ -941,7 +941,7 @@ Establish consistent naming conventions:
 
 ### Scaling Across Teams
 
-For large organizations, Kamil Nicieja's *Writing Great Specifications* covers
+For large organizations, Kamil Nicieja's _Writing Great Specifications_ covers
 how to structure feature files by domains and sub-domains, using principles from
 Domain-Driven Design. Key strategies include:
 
@@ -1029,7 +1029,7 @@ There are rare cases where specifying interaction details matters:
 - **Regulatory requirements**: Specific wording or workflow steps may be
   mandated.
 
-Even in these cases, keep the imperative details minimal and explain *why* they
+Even in these cases, keep the imperative details minimal and explain _why_ they
 are specified.
 
 ---
@@ -1039,7 +1039,7 @@ are specified.
 ### The Connection
 
 Behavior-Driven Development borrows the concept of **ubiquitous language** from
-Domain-Driven Design (DDD). As Eric Evans described in *Domain-Driven Design*
+Domain-Driven Design (DDD). As Eric Evans described in _Domain-Driven Design_
 (2003), the approach "consists notably of striving to use the vocabulary of a
 given business domain, not only in discussions about the requirements for a
 software product but in discussions of design as well and all the way into the
@@ -1120,7 +1120,7 @@ particularly good example. Aruba is a tool for testing
 command-line applications,
 and its `features/` directory serves as both its specification and its
 documentation. The project explicitly states: "You can expect Aruba to work as
-documented" --- the feature files *are* the contract with users.
+documented" --- the feature files _are_ the contract with users.
 
 #### The Gherkin Parser Itself
 
@@ -1216,7 +1216,7 @@ This example demonstrates:
 - A clear feature description explaining the business context.
 - Business rules captured with the `Rule` keyword.
 - Concrete examples with specific data (dates, prices, plan names).
-- Declarative style --- focuses on *what* happens, not *how* the UI works.
+- Declarative style --- focuses on _what_ happens, not _how_ the UI works.
 - Coverage of happy paths (upgrade, downgrade) and important variations (trial,
   cancellation).
 

@@ -64,7 +64,7 @@ This is the most important stylistic choice. **Always use declarative style.**
 
 ### Imperative Style (avoid)
 
-Step-by-step UI instructions that specify *how* the user interacts with the
+Step-by-step UI instructions that specify _how_ the user interacts with the
 system. These are brittle — they break when the UI changes even if the
 behavior stays the same.
 
@@ -81,7 +81,7 @@ Scenario: User logs in
 
 ### Declarative Style (use this)
 
-Higher-level statements describing *what* happens and *why* it matters. The
+Higher-level statements describing _what_ happens and _why_ it matters. The
 technical details live in step definitions, not in the scenario.
 
 ```gherkin
@@ -94,7 +94,7 @@ Scenario: Registered user can access their account
 
 ### How to Tell the Difference
 
-Ask: *"Would this wording need to change if the implementation changed?"* If
+Ask: _"Would this wording need to change if the implementation changed?"_ If
 the login moved from a form to biometric authentication, the imperative
 version breaks. The declarative version still works.
 
@@ -184,7 +184,7 @@ When the user submits the search query
 ```
 
 - There should be a **single logical action** per scenario
-- Describe *what* happens, not *how*
+- Describe _what_ happens, not _how_
 - Avoid CSS selectors, API endpoints, or framework-specific details
 
 ### Then — Verify the Resulting State
@@ -304,7 +304,7 @@ coverage than example-only scenarios. Instead of checking specific
 input-output pairs, property-based tests verify that a property or
 invariant holds across many inputs.
 
-### When to Use
+### When to Use Property-Based Testing
 
 - The requirement states a general rule that should hold for any
   valid input (e.g., "all passwords must be at least 8 characters")
@@ -314,7 +314,7 @@ invariant holds across many inputs.
 - Example-based testing would require many rows to cover the input
   space adequately
 
-### When NOT to Use
+### When NOT to Use Property-Based Testing
 
 - The behavior is inherently example-driven (specific error messages
   for specific inputs)
@@ -406,21 +406,21 @@ verifies both the tier assignment and the arithmetic.
 A `Background` runs before each scenario in its scope (feature or rule). It
 reduces repetition of shared `Given` steps.
 
-### When to Use
+### When to Use Background Blocks
 
 - **Every** scenario in the scope shares the same setup
 - The background steps provide essential context for understanding each
   scenario
 - Extracting shared setup makes each scenario shorter and more focused
 
-### When NOT to Use
+### When NOT to Use Background Blocks
 
 - Only some scenarios need the setup (use individual Givens)
 - It exceeds 4-5 lines (too much shared state obscures meaning)
 - It contains `When` or `Then` steps (Background is for Givens only)
 - It sets up state that not all scenarios need
 
-### Good Example
+### Good Background Example
 
 ```gherkin
 Feature: Premium Content Access
@@ -473,7 +473,7 @@ Data Tables pass structured data to a single step. They differ from Scenario
 Outline Examples tables — Data Tables provide data within one scenario run;
 Examples tables run the entire scenario multiple times.
 
-### When to Use
+### When to Use Data Tables
 
 - Providing a list of items to a step
 - Specifying object properties compactly
@@ -711,7 +711,7 @@ The bad version requires three nearly identical step definitions. The good
 version uses one step definition with a parameter, reducing duplication and
 making it easy to add new fields without writing new steps.
 
-**When NOT to consolidate:** Keep steps separate when the *behavior* differs,
+**When NOT to consolidate:** Keep steps separate when the _behavior_ differs,
 not just the data. "the user uploads a photo" and "the user enters their
 name" involve different interactions and should remain distinct steps, even
 though both populate profile fields.

@@ -174,7 +174,7 @@ not skill quality.
 ### 6. Anti-patterns observed in existing skills
 
 - **Knowledge dumps without workflow** — loading 10KB of reference material
-  into context without telling the agent what to *do* with it
+  into context without telling the agent what to _do_ with it
 - **Framework coupling** — skills that only work with one test runner
   (Ruby/Cucumber, Playwright-bdd, Golang/Godog)
 - **No validation** — most skills generate .feature files but never check

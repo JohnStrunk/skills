@@ -501,7 +501,7 @@ Python, PHP, C, C++, Dart, Objective-C.
    structure.
 
 2. **Compiler: AST => Pickles:** The AST is compiled into a simpler
-   representation called *Pickles*, which are suitable for execution
+   representation called _Pickles_, which are suitable for execution
    by Cucumber.
 
 **Pickle format details:**
@@ -641,10 +641,10 @@ as a Docker image.
 - Enable/disable checks via `--enable`/`--disable` flags
 - Disable checks per-feature using `@disableCHECK` tags
 - Configuration via `.gherkin_lint.yml`
-- Docker support: `docker run -ti -v $(pwd):/src -w /src gherkin/lint *.feature`
+- Docker support: `docker run -ti -v $(pwd):/src -w /src gherkin/lint _.feature`
 - Errors (affect return code) and warnings (informational)
 
-**Installation:** `gem install gherkin_lint` or via Docker.
+**_Installation:_** `gem install gherkin_lint` or via Docker.
 
 ---
 
@@ -1200,7 +1200,7 @@ A Java utility to convert parsed Gherkin files to pretty-printed strings.
 files in JavaScript/TypeScript. Provides a precompiler pipeline that transforms
 `.feature` files before they are executed.
 
-**Available precompilers (gpc-* packages):**
+**Available precompilers (gpc-\* packages):**
 
 | Package | Purpose |
 | --- | --- |

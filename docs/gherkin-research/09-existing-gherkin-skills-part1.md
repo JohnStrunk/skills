@@ -291,7 +291,7 @@ the user is working on Cucumber/Gherkin tasks in a Ruby project.
 >                                 And I click "Login"
 > ```
 >
-> - Describe *what* the system does, not *how*
+> - Describe _what_ the system does, not _how_
 > - One behavior per scenario, 3-5 steps
 > - Keep Background short (≤4 lines), essential context only
 > - Use domain language stakeholders understand
@@ -445,12 +445,12 @@ It provides:
 > [... ~13,500 bytes of comprehensive Gherkin syntax reference, best practices, patterns, i18n support, and file organization guidance ...]
 > ```
 >
-> *(Full content omitted for length -- see the source repo
+> _(Full content omitted for length -- see the source repo
 > for the complete file. Key sections: Feature File
 > Structure, Keywords, Scenario Types, Tags (including
 > Playwright-specific @skip/@only/@fail/@fixme), Data Tables,
 > Doc Strings, Internationalization, Best Practices, Common
-> Patterns, File Organization.)*
+> Patterns, File Organization.)_
 
 ---
 
@@ -714,14 +714,14 @@ This skill defines a detailed 7-step interactive workflow:
    scenarios. Present suggested scenarios as a checklist for
    user approval.
 
-2. **Scan for Existing Gherkins** -- Search for `**/*.feature`
+2. **Scan for Existing Gherkins** -- Search for `**/_.feature`
    files and Gherkin-style content in other files. Read existing
    files to understand style conventions. Check for behavioral
    equivalence (not just identical wording) to detect conflicts.
    Flag conflicts explicitly with the exact conflicting scenario
    quoted.
 
-3. **Write the Scenarios** -- Apply reference files for syntax
+3. **_Write the Scenarios_** -- Apply reference files for syntax
    (`references/gherkin-syntax.md`), quality
    (`references/best-practices.md`), and anti-pattern review
    (`references/anti-patterns.md`).
@@ -905,10 +905,10 @@ From `references/gherkin-syntax.md`:
 > [... reports additions, conflicts, glossary suggestions, next scenarios ...]
 > ```
 >
-> *(Full content: ~10,150 bytes. The complete SKILL.md
+> _(Full content: ~10,150 bytes. The complete SKILL.md
 > includes a detailed password-reset example showing the full
 > interactive workflow from asking questions through proposing
-> a checklist to writing the final feature file.)*
+> a checklist to writing the final feature file.)_
 
 ---
 
