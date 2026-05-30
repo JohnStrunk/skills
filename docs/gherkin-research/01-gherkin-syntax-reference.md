@@ -16,7 +16,7 @@ and generate well-formed `.feature` files.
 5. [Rule (Gherkin 6+)](#5-rule-gherkin-6)
 6. [Background](#6-background)
 7. [Scenario / Example](#7-scenario--example)
-8. [Steps: Given / When / Then / And / But / *](#8-steps-given--when--then--and--but--)
+8. [Steps: Given / When / Then / And / But / _](#8-steps-given--when--then--and--but--)
 9. [Scenario Outline / Scenario Template](#9-scenario-outline--scenario-template)
 10. [Examples Tables](#10-examples-tables)
 11. [Data Tables](#11-data-tables)
@@ -37,7 +37,7 @@ and generate well-formed `.feature` files.
 Gherkin is a plain-text, line-oriented language for describing software behavior
 without specifying implementation details. It serves three purposes:
 
-- **Living documentation** -- human-readable specifications that stay in sync
+- **_Living documentation_** -- human-readable specifications that stay in sync
   with the code.
 - **Automated tests** -- each scenario maps to executable step definitions in
   a programming language.
@@ -140,8 +140,8 @@ These are structural keywords that define sections of the feature file.
 | Primary Keyword    | Synonym(s)                         | Purpose                                    |
 |--------------------|------------------------------------|--------------------------------------------|
 | `Feature`          | `Business Need`, `Ability`         | Top-level container; one per file          |
-| `Rule`             | *(none)*                           | Groups scenarios under a business rule     |
-| `Background`       | *(none)*                           | Shared preconditions for sibling scenarios |
+| `Rule`             | _(none)_                           | Groups scenarios under a business rule     |
+| `Background`       | _(none)_                           | Shared preconditions for sibling scenarios |
 | `Scenario`         | `Example`                          | A single concrete test case                |
 | `Scenario Outline` | `Scenario Template`                | A parameterized scenario template          |
 | `Examples`         | `Scenarios`                        | Data table for Scenario Outline parameters |
@@ -157,9 +157,9 @@ These are step keywords that begin individual steps within a scenario.
 | `Then`  | Specifies the expected outcome / observable result         |
 | `And`   | Continues the previous step type (Given, When, or Then)    |
 | `But`   | Continues previous step type with a contrasting clause     |
-| `*`     | Wildcard; replaces any step keyword for bullet-point use   |
+| `_`     | Wildcard; replaces any step keyword for bullet-point use   |
 
-> **Important:** Keywords are followed by a single space before the step text.
+> **_Important:_** Keywords are followed by a single space before the step text.
 > The parser does not distinguish between step types when matching step
 > definitions -- `Given foo` and `When foo` match the same definition.
 > The keywords exist solely for human readability.
@@ -1106,10 +1106,10 @@ In step definition code, tags can control which hooks run:
 ```java
 // Java example
 @Before("@database")
-public void setupDatabase() { /* ... */ }
+public void setupDatabase() { /* ... _/ }
 
 @After("@browser and not @headless")
-public void closeBrowser(Scenario scenario) { /* ... */ }
+public void closeBrowser(Scenario scenario) { /_ ... */ }
 ```
 
 ---
@@ -1155,7 +1155,7 @@ in the feature title.
 ### Convention
 
 Use comments sparingly. Well-written Gherkin should be self-explanatory. When
-comments are needed, use them to explain *why*, not *what*:
+comments are needed, use them to explain _why_, not _what_:
 
 ```gherkin
 Feature: Order processing

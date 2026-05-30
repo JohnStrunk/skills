@@ -9,8 +9,8 @@
 
 **Definition (from
 [alistairmavin.com/ears/](https://alistairmavin.com/ears/)):**
-*"The Easy Approach to Requirements Syntax (EARS) is a
-mechanism to gently constrain textual requirements."*
+_"The Easy Approach to Requirements Syntax (EARS) is a
+mechanism to gently constrain textual requirements."_
 
 ## Table of Contents
 
@@ -44,16 +44,16 @@ documents governing aero engine control systems.
 
 ### When It Was Published
 
-- **2009**: The original paper, *"Easy Approach to
-  Requirements Syntax (EARS)"*, was presented at the
+- **2009**: The original paper, _"Easy Approach to
+  Requirements Syntax (EARS)"_, was presented at the
   **17th IEEE International Requirements Engineering
   Conference (RE'09)**.
-- **2010**: A follow-up paper, *"Big EARS (The Return of
-  Easy Approach to Requirements Syntax)"*, was presented
+- **2010**: A follow-up paper, _"Big EARS (The Return of
+  Easy Approach to Requirements Syntax)"_, was presented
   at the **18th IEEE International Requirements
   Engineering Conference (RE'10)**, extending the
   original work.
-- **2019**: A retrospective paper, *"Ten Years of EARS"*,
+- **2019**: A retrospective paper, _"Ten Years of EARS"_,
   was published in **IEEE Software** (vol. 36, no. 5,
   pp. 10-14), reflecting on a decade of adoption and
   evolution.
@@ -66,9 +66,9 @@ Rolls-Royce PLC, EARS emerged while they were analyzing
 airworthiness regulations for jet engine control systems.
 While analyzing hundreds of requirements in aero engine
 certification documents, Mavin observed that
-*"requirements all followed a similar structure"* and
-that *"requirements were easiest to read when the clauses
-always appeared in the same order"*
+_"requirements all followed a similar structure"_ and
+that _"requirements were easiest to read when the clauses
+always appeared in the same order"_
 ([alistairmavin.com/ears/](https://alistairmavin.com/ears/)).
 EARS codified these observations into a small set of
 reusable templates.
@@ -154,8 +154,8 @@ The <system name> shall <system response>.
 **Ubiquitous Examples**:
 
 - "The mobile phone shall have a mass of less than
-  XX grams." *(from
-  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))*
+  XX grams." _(from
+  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))_
 - "The mobile phone shall have a mass of less than
   200 grams."
 - "The system shall display the current time in
@@ -190,8 +190,8 @@ When <trigger>, the <system name> shall <system response>.
 **Event-Driven Examples**:
 
 - "When 'mute' is selected, the laptop shall suppress
-  all audio output." *(from
-  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))*
+  all audio output." _(from
+  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))_
 - "When the user presses the START button, the system
   shall begin recording."
 - "When a user submits valid credentials, the system
@@ -229,8 +229,8 @@ While <precondition(s)>, the <system name> shall <system response>.
 **State-Driven Examples**:
 
 - "While there is no card in the ATM, the ATM shall
-  display 'insert card to begin'." *(from
-  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))*
+  display 'insert card to begin'." _(from
+  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))_
 - "While no card is inserted, the ATM shall display
   'Please insert your card'."
 - "While the aircraft is in flight, the control system
@@ -273,8 +273,8 @@ If <unwanted condition>, then the <system name> shall <system response>.
 
 - "If an invalid credit card number is entered, then
   the website shall display 'please re-enter credit
-  card details'." *(from
-  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))*
+  card details'." _(from
+  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))_
 - "If an invalid credit card number is entered, then
   the system shall display an error message."
 - "If power fails, then the system shall preserve all
@@ -314,8 +314,8 @@ Where <feature is included>, the <system name> shall <system response>.
 **Optional Feature Examples**:
 
 - "Where the car has a sunroof, the car shall have a
-  sunroof control panel on the driver door." *(from
-  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))*
+  sunroof control panel on the driver door." _(from
+  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))_
 - "Where a sunroof is fitted, the control panel shall
   include a sunroof open/close switch."
 - "Where two-factor authentication is enabled, the
@@ -417,8 +417,8 @@ the <system name> shall <system response>.
 
 - "While the aircraft is on ground, when reverse thrust
   is commanded, the engine control system shall enable
-  reverse thrust." *(from
-  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))*
+  reverse thrust." _(from
+  [alistairmavin.com/ears/](https://alistairmavin.com/ears/))_
 - "While the aircraft is on the ground and reverse
   thrust is commanded, when wheel speed exceeds
   50 knots, the engine control system shall enable
@@ -794,8 +794,8 @@ attempt, reducing review-rework cycles.
 
 If an author cannot write a requirement in EARS format,
 it typically means they do not yet understand the
-requirement well enough. As Mavin states: *"If you can't
-write it in EARS, then you don't understand it."* This
+requirement well enough. As Mavin states: _"If you can't
+write it in EARS, then you don't understand it."_ This
 makes gaps in understanding immediately visible.
 
 #### 6. Cognitive Offloading
@@ -968,8 +968,8 @@ EARS is classified as a **semi-formal specification
 method** -- it sits between unconstrained natural
 language (informal) and mathematical specification
 languages (fully formal). Multiple academic studies have
-described it as *"the most used semi-formal
-specification method"* for functional requirements.
+described it as _"the most used semi-formal
+specification method"_ for functional requirements.
 
 ---
 
@@ -1071,9 +1071,9 @@ detection and classification:
 
 1. **Mavin, A., Wilkinson, P., Harwood, A., &
    Novak, M.** (2009). "Easy Approach to Requirements
-   Syntax (EARS)." *Proceedings of the 17th IEEE
+   Syntax (EARS)." _Proceedings of the 17th IEEE
    International Requirements Engineering Conference
-   (RE'09)*. IEEE.
+   (RE'09)_. IEEE.
    - The foundational paper introducing EARS with the
      five templates
    - Includes the Rolls-Royce aero engine case study
@@ -1081,15 +1081,15 @@ detection and classification:
 
 2. **Mavin, A. & Wilkinson, P.** (2010). "Big EARS
    (The Return of Easy Approach to Requirements
-   Syntax)." *Proceedings of the 18th IEEE
+   Syntax)." _Proceedings of the 18th IEEE
    International Requirements Engineering Conference
-   (RE'10)*. IEEE.
+   (RE'10)_. IEEE.
    - Extended the original work with additional
      patterns and guidance
    - Addressed complex requirement combinations
 
 3. **Mavin, A. & Wilkinson, P.** (2019). "Ten Years
-   of EARS." *IEEE Software*, 36(5), 10-14.
+   of EARS." _IEEE Software_, 36(5), 10-14.
    - Retrospective on a decade of EARS adoption
    - Discusses evolution, lessons learned, and
      industry adoption
@@ -1097,7 +1097,7 @@ detection and classification:
 ### Related Academic Work
 
 1. **Cross-Project Multiclass Classification of
-   EARS-Based Functional Requirements.** *Systems*
+   EARS-Based Functional Requirements.** _Systems_
    journal, 13(7), 567. MDPI.
    - Treats EARS as "the most used semi-formal
      specification method"
@@ -1105,20 +1105,20 @@ detection and classification:
      into five EARS classes
 
 2. **Learning Software Requirements Syntax: An
-   Unsupervised Approach.** *Knowledge-Based Systems*.
+   Unsupervised Approach.** _Knowledge-Based Systems_.
    Elsevier.
    - Compares requirements templates including EARS,
      Rupp, and User Stories
 
 3. **A Comparative Evaluation of Requirement Template
-   Systems.** *RE'23 Workshop*. University of Koblenz.
+   Systems.** _RE'23 Workshop_. University of Koblenz.
    - Compares EARS, MASTER, and ISO/IEC/IEEE 29148
      templates
 
 ### Tutorial and Practitioner Resources
 
 1. **Terzakis, J.** (2013). "EARS: Easy Approach to
-   Requirements Syntax." Tutorial at *ICCGI 2013*
+   Requirements Syntax." Tutorial at _ICCGI 2013_
    (IARIA Conference).
    - Comprehensive tutorial presentation covering all
      EARS patterns
@@ -1260,8 +1260,8 @@ COMPLEX:       While <state>, when <trigger>,
 
 ## Summary
 
-EARS -- *"a mechanism to gently constrain textual
-requirements"*
+EARS -- _"a mechanism to gently constrain textual
+requirements"_
 ([alistairmavin.com/ears/](https://alistairmavin.com/ears/))
 -- is a lightweight, practical, and widely adopted
 methodology for writing high-quality natural language

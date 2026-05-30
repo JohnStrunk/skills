@@ -42,7 +42,7 @@ needing to ask questions.
 This is the single most important stylistic choice in Gherkin writing. The
 Cucumber documentation frames it as: **describe behavior, not implementation**.
 
-**Imperative style (avoid):** Step-by-step UI instructions that specify *how*
+**Imperative style (avoid):** Step-by-step UI instructions that specify _how_
 the user interacts with the system.
 
 ```gherkin
@@ -56,8 +56,8 @@ Scenario: User logs in successfully
   And I should see a link labeled "My Account"
 ```
 
-**Declarative style (prefer):** Higher-level statements describing *what*
-happens and *why* it matters.
+**Declarative style (prefer):** Higher-level statements describing _what_
+happens and _why_ it matters.
 
 ```gherkin
 # GOOD: Declarative -- focused on behavior
@@ -67,8 +67,8 @@ Scenario: Registered user can access their account
   Then Bob should see his account dashboard
 ```
 
-The Cucumber docs advise asking: *"Will this wording need to change if the
-implementation does?"* If the answer is yes, the scenario is too imperative.
+The Cucumber docs advise asking: _"Will this wording need to change if the
+implementation does?"_ If the answer is yes, the scenario is too imperative.
 
 **Why declarative wins:**
 
@@ -207,8 +207,8 @@ steps/
   ExperienceStepDefinitions.java
 ```
 
-The Cucumber docs warn: *"This may lead to an explosion of step definitions,
-code duplication, and high maintenance costs."*
+The Cucumber docs warn: _"This may lead to an explosion of step definitions,
+code duplication, and high maintenance costs."_
 
 ### 3.2 Conjunction Steps
 
@@ -224,7 +224,7 @@ Given I have shades
 And I have a brand new Mustang
 ```
 
-The principle: *"Strive to keep your steps atomic as much as possible."* Use
+The principle: _"Strive to keep your steps atomic as much as possible."_ Use
 Gherkin's built-in `And` and `But` keywords to compose atomic steps.
 
 ### 3.3 Procedure-Driven Scenarios
@@ -442,9 +442,9 @@ Steps must appear in the correct order: **Given -> When -> Then**
 - If you find yourself needing a second `When` after a `Then`, you have two
   scenarios
 
-### The `*` (Asterisk) Keyword
+### The `_` (Asterisk) Keyword
 
-Gherkin supports `*` as a generic step keyword. It is useful for lists where
+Gherkin supports `_` as a generic step keyword. It is useful for lists where
 Given/When/Then feels forced:
 
 ```gherkin
@@ -1060,8 +1060,8 @@ better handled at the unit or integration test level.
 ### 13.6 Unused Step Definitions
 
 Creating step definitions speculatively before scenarios need
-them. The Cucumber docs advise: *"Only implement steps you
-actually use."* Unused definitions become "cruft that will need
+them. The Cucumber docs advise: _"Only implement steps you
+actually use."_ Unused definitions become "cruft that will need
 to be cleaned up later."
 
 ### 13.7 Not Involving the Whole Team
@@ -1092,12 +1092,12 @@ sources:
   - "BDD 101: The Gherkin Language"
 - **BDD Books (Seb Rose and Gaspar Nagy)** --
   [bddbooks.com](https://www.bddbooks.com/)
-  - *Discovery: Explore Behaviour Using Examples*
-  - *Formulation: Document Examples with Given/When/Then*
+  - _Discovery: Explore Behaviour Using Examples_
+  - _Formulation: Document Examples with Given/When/Then_
 - **Dan North** -- Creator of BDD
   - "Introducing BDD" -- [dannorth.net](https://dannorth.net/)
 - **Matt Wynne** -- Cucumber co-founder
   - "Example Mapping: Introduction" -- Cucumber Blog
 - **John Ferguson Smart** -- BDD practitioner and author
   - "Three Amigos: Requirements Discovery"
-  - *BDD in Action* (Manning)
+  - _BDD in Action_ (Manning)

@@ -121,7 +121,70 @@ PRONOUNS_BEFORE_SHALL: list[str] = ["it", "they", "he", "she", "we", "you"]
 # Step audit constants
 # ---------------------------------------------------------------------------
 
-SIMILARITY_THRESHOLD = 0.75
+SIMILARITY_THRESHOLD = 0.90
+
+NAMING_SIMILARITY_THRESHOLD = 0.50
+
+# Word-level antonym / qualifier pairs that legitimately distinguish
+# two otherwise-identical step filenames.
+_ANTONYM_PAIRS: list[tuple[str, str]] = [
+    ("not", ""),
+    ("no", ""),
+    ("should", "should_not"),
+    ("is", "is_not"),
+    ("exists", "not_exist"),
+    ("valid", "invalid"),
+    ("expired", "valid"),
+    ("accepts", "rejects"),
+    ("include", "exclude"),
+    ("includes", "excludes"),
+    ("contain", "not_contain"),
+    ("contains", "not_contain"),
+    ("with", "without"),
+    ("a", "an"),
+    ("singular", "plural"),
+    ("again", ""),
+    ("llm", "mcp"),
+    ("get", "post"),
+    ("get", "delete"),
+    ("post", "put"),
+    ("post", "delete"),
+    ("delete", "put"),
+    ("create", "delete"),
+    ("eslint", "markdownlint"),
+    ("eslint", "yamllint"),
+    ("markdownlint", "yamllint"),
+    ("dependency", "dev_dependency"),
+    ("fields", "methods"),
+    ("field", "method"),
+    ("select", "delete"),
+    ("sleep", "wake"),
+    ("key", "url"),
+    ("be", "equal"),
+    ("row", "rows"),
+    ("n", "zero"),
+    ("n", ""),
+    ("has", "should"),
+    ("has", "stored"),
+    ("has", "is"),
+    ("has", "with"),
+    ("stored", "should"),
+    ("been", "be"),
+    ("been", ""),
+    ("dev", ""),
+    ("valid", ""),
+    ("idea", ""),
+    ("lint", "eslint"),
+    ("on", ""),
+    ("k8s", ""),
+    ("config", ""),
+    ("staged", ""),
+    ("arbitrary", ""),
+    ("problem", ""),
+    ("statement", ""),
+    ("artifact", ""),
+    ("workspace", ""),
+]
 
 STEP_FILE_EXTENSIONS: dict[str, list[str]] = {
     "behave": [".py"],
@@ -129,6 +192,35 @@ STEP_FILE_EXTENSIONS: dict[str, list[str]] = {
 }
 
 STEP_DIR_NAMES = {"given", "when", "then"}
+
+HOOK_KEYWORDS = frozenset(
+    {
+        "Before",
+        "After",
+        "BeforeAll",
+        "AfterAll",
+        "BeforeStep",
+        "AfterStep",
+    }
+)
+
+
+_CI = os.environ.get("GITHUB_ACTIONS") == "true"
+
+
+def _gh_annotation(
+    level: str, message: str, file: str | None = None, line: int | None = None
+) -> None:
+    """Emit a GitHub Actions workflow command annotation."""
+    if not _CI:
+        return
+    params: list[str] = []
+    if file:
+        params.append(f"file={file}")
+    if line:
+        params.append(f"line={line}")
+    param_str = " " + ",".join(params) if params else ""
+    print(f"::{level}{param_str}::{message}")
 
 
 # ---------------------------------------------------------------------------
@@ -228,7 +320,7 @@ def audit_feature_file(file_path: str) -> int:
         re.IGNORECASE,
     )
 
-    for line in lines:
+    for line_num, line in enumerate(lines, start=1):
         rule_match = rule_re.match(line)
         scenario_match = scenario_re.match(line)
 
@@ -236,6 +328,7 @@ def audit_feature_file(file_path: str) -> int:
             title = rule_match.group(1).strip()
             current_rule = {
                 "title": title,
+                "line": line_num,
                 "shall_count": len(ears_pattern.findall(title)),
                 "description": [],
                 "scenarios": [],
@@ -279,29 +372,39 @@ def audit_feature_file(file_path: str) -> int:
                 if ears_pattern.search(clean_line):
                     current_rule["description_ears_count"] += 1
 
-    # Reporting
-    errors: list[str] = []
+    # Reporting — (message, line_number_or_None) tuples
+    errors: list[tuple[str, int | None]] = []
     successes: list[str] = []
 
     if scenarios_outside_rules:
         errors.append(
-            f"Found {len(scenarios_outside_rules)} scenarios outside of any Rule block: "
-            f"{', '.join(scenarios_outside_rules)}"
+            (
+                f"Found {len(scenarios_outside_rules)} scenarios outside of any Rule block: "
+                f"{', '.join(scenarios_outside_rules)}",
+                None,
+            )
         )
 
     for rule in rules:
         rule_prefix = f"Rule '{rule['title']}':"
+        rule_line: int = rule["line"]
 
         if rule["shall_count"] == 0:
             errors.append(
-                f"{rule_prefix} Rule title must be an EARS requirement "
-                "(must contain 'shall')."
+                (
+                    f"{rule_prefix} Rule title must be an EARS requirement "
+                    "(must contain 'shall').",
+                    rule_line,
+                )
             )
         elif rule["shall_count"] > 1:
             errors.append(
-                f"{rule_prefix} Rule title contains {rule['shall_count']} "
-                "occurrences of 'shall'. EARS requirements must be atomic "
-                "— use exactly one 'shall' per Rule."
+                (
+                    f"{rule_prefix} Rule title contains {rule['shall_count']} "
+                    "occurrences of 'shall'. EARS requirements must be atomic "
+                    "— use exactly one 'shall' per Rule.",
+                    rule_line,
+                )
             )
         else:
             successes.append(f"{rule_prefix} Valid EARS requirement in title.")
@@ -310,34 +413,48 @@ def audit_feature_file(file_path: str) -> int:
         if wrong_kws:
             kw_list = ", ".join(sorted(set(wrong_kws)))
             errors.append(
-                f"{rule_prefix} Rule title uses non-standard obligation "
-                f"keyword(s): {kw_list}. Use 'shall' for mandatory requirements."
+                (
+                    f"{rule_prefix} Rule title uses non-standard obligation "
+                    f"keyword(s): {kw_list}. Use 'shall' for mandatory requirements.",
+                    rule_line,
+                )
             )
 
         vague_found = _find_vague_terms(rule["title"])
         for term, category in vague_found:
             errors.append(
-                f"{rule_prefix} Rule title contains vague language: "
-                f"'{term}' ({category}). Replace with a specific, "
-                "measurable value."
+                (
+                    f"{rule_prefix} Rule title contains vague language: "
+                    f"'{term}' ({category}). Replace with a specific, "
+                    "measurable value.",
+                    rule_line,
+                )
             )
 
         for err in _check_ears_pattern_structure(rule["title"]):
-            errors.append(f"{rule_prefix} {err}")
+            errors.append((f"{rule_prefix} {err}", rule_line))
 
         for err in _check_missing_system_name(rule["title"]):
-            errors.append(f"{rule_prefix} {err}")
+            errors.append((f"{rule_prefix} {err}", rule_line))
 
         if rule["description_ears_count"] > 0:
             errors.append(
-                f"{rule_prefix} Description contains "
-                f"{rule['description_ears_count']} EARS requirement(s). "
-                "Additional requirements must not appear in the "
-                "description — move each to its own Rule title."
+                (
+                    f"{rule_prefix} Description contains "
+                    f"{rule['description_ears_count']} EARS requirement(s). "
+                    "Additional requirements must not appear in the "
+                    "description — move each to its own Rule title.",
+                    rule_line,
+                )
             )
 
         if not rule["scenarios"]:
-            errors.append(f"{rule_prefix} No scenarios found under this rule.")
+            errors.append(
+                (
+                    f"{rule_prefix} No scenarios found under this rule.",
+                    rule_line,
+                )
+            )
         else:
             successes.append(
                 f"{rule_prefix} {len(rule['scenarios'])} scenario(s) found."
@@ -351,8 +468,9 @@ def audit_feature_file(file_path: str) -> int:
         )
     else:
         print("FAIL: Specification has audit errors.")
-        for err in errors:
-            print(f"  [ERROR] {err}")
+        for msg, line_no in errors:
+            print(f"  [ERROR] {msg}")
+            _gh_annotation("error", msg, file_path, line_no)
 
     print("\nSummary of findings:")
     for succ in successes:
@@ -529,20 +647,55 @@ def _run_behave_dry_run(features_dir: str) -> dict:
 
 
 def _run_cucumber_dry_run(features_dir: str) -> dict:
-    """Run cucumber-js --dry-run and return parsed JSON output."""
+    """Run cucumber-js --dry-run and return parsed JSON output.
+
+    Uses the project-local cucumber-js so the project's config, step
+    definitions, and support modules are available.  If the local binary
+    is missing (e.g. node_modules not installed), returns a skippable
+    error with remediation advice.
+    """
+    # Prefer the project-local binary so the project's cucumber config
+    # (requireModule, require globs, etc.) is honoured.
+    try:
+        check = subprocess.run(
+            ["npx", "cucumber-js", "--version"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+    except subprocess.TimeoutExpired:
+        return {
+            "features": [],
+            "error": "cucumber-js version check timed out after 30s.",
+        }
+    if check.returncode != 0:
+        return {
+            "features": [],
+            "error": (
+                "cucumber-js is not installed locally. "
+                "Step definition audit requires the project's own "
+                "cucumber-js so that its configuration and step "
+                "definitions are available.\n"
+                "  Fix: run `npm install` (or `npm ci`) in the "
+                "project root, then re-run the audit."
+            ),
+        }
+
     with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as tmp:
         tmp_path = tmp.name
 
     try:
+        # Don't pass features_dir as a positional arg — let the project's
+        # cucumber config (cucumber.js / cucumber.cjs) control the feature
+        # paths.  Passing an extra path merges with the config and can
+        # pick up stray .feature files in node_modules or other directories.
         result = subprocess.run(
             [
                 "npx",
-                "--yes",
-                "@cucumber/cucumber",
+                "cucumber-js",
                 "--dry-run",
                 "--format",
                 f"json:{tmp_path}",
-                features_dir,
             ],
             capture_output=True,
             text=True,
@@ -590,6 +743,9 @@ def _extract_matches(features_json: list[dict]) -> tuple[set[str], list[str]]:
     for feature in features_json:
         for element in feature.get("elements", []):
             for step in element.get("steps", []):
+                keyword = step.get("keyword", "").strip()
+                if keyword in HOOK_KEYWORDS:
+                    continue
                 match = step.get("match")
                 if match and "location" in match:
                     loc = match["location"]
@@ -598,7 +754,6 @@ def _extract_matches(features_json: list[dict]) -> tuple[set[str], list[str]]:
                     matched_files.add(file_path)
                 elif not match:
                     step_loc = step.get("location", "unknown")
-                    keyword = step.get("keyword", "").strip()
                     name = step.get("name", "")
                     undefined_steps.append(f"{keyword} {name}  ({step_loc})")
 
@@ -615,12 +770,16 @@ def _find_step_files(features_dir: str, framework: str) -> list[str]:
     valid_exts = set(STEP_FILE_EXTENSIONS.get(framework, [".py"]))
     features_path = Path(features_dir)
 
-    # Look for steps in the standard locations
+    # Look for steps in the standard locations.  When the caller passes
+    # the project root (.) rather than the features/ directory itself,
+    # we also need to check features/steps and features/step_definitions.
     step_dirs = []
     for candidate in [
         features_path / "steps",
-        features_path.parent / "steps",
         features_path / "step_definitions",
+        features_path / "features" / "steps",
+        features_path / "features" / "step_definitions",
+        features_path.parent / "steps",
         features_path.parent / "step_definitions",
     ]:
         if candidate.is_dir():
@@ -660,6 +819,22 @@ def _normalize_filename(name: str) -> str:
     return stem
 
 
+def _differs_by_antonym(name_a: str, name_b: str) -> bool:
+    """Check if two normalized names differ only by known antonym pairs."""
+    words_a = set(name_a.split("_"))
+    words_b = set(name_b.split("_"))
+    remaining = (words_a - words_b) | (words_b - words_a)
+    if not remaining:
+        return True
+    for w1, w2 in _ANTONYM_PAIRS:
+        pair = {w1, w2} - {""}
+        if pair and pair <= remaining:
+            remaining -= pair
+            if not remaining:
+                return True
+    return False
+
+
 def _find_near_duplicate_files(
     step_files: list[str],
 ) -> list[tuple[str, str, float]]:
@@ -670,11 +845,13 @@ def _find_near_duplicate_files(
     for i in range(len(step_files)):
         for j in range(i + 1, len(step_files)):
             if names[i] == names[j]:
-                duplicates.append((step_files[i], step_files[j], 1.0))
+                if not _differs_by_antonym(names[i], names[j]):
+                    duplicates.append((step_files[i], step_files[j], 1.0))
             else:
                 ratio = SequenceMatcher(None, names[i], names[j]).ratio()
                 if ratio >= SIMILARITY_THRESHOLD:
-                    duplicates.append((step_files[i], step_files[j], ratio))
+                    if not _differs_by_antonym(names[i], names[j]):
+                        duplicates.append((step_files[i], step_files[j], ratio))
 
     return duplicates
 
@@ -721,16 +898,73 @@ def _check_multi_step_files(
 # ---------------------------------------------------------------------------
 
 
-def _step_text_to_filename(step_text: str) -> str:
-    """Convert step text to expected snake_case filename stem."""
-    cleaned = re.sub(r'"[^"]*"', "", step_text)
-    cleaned = re.sub(r"<[^>]*>", "", cleaned)
-    cleaned = re.sub(r"\{[^}]*\}", "", cleaned)
-    cleaned = cleaned.strip()
-    cleaned = re.sub(r"[^a-zA-Z0-9\s]", "", cleaned)
-    cleaned = re.sub(r"\s+", "_", cleaned).lower()
-    cleaned = cleaned.strip("_")
-    return cleaned
+def _split_camel_case(text: str) -> str:
+    """Insert spaces before uppercase letters in camelCase words."""
+    return re.sub(r"([a-z])([A-Z])", r"\1 \2", text)
+
+
+def _stem_word(word: str) -> str:
+    """Naive English stemming — strip common suffixes."""
+    for suffix in (
+        "tion",
+        "sion",
+        "ing",
+        "ment",
+        "ness",
+        "ally",
+        "ous",
+        "ive",
+        "ful",
+        "less",
+        "able",
+        "ible",
+    ):
+        if word.endswith(suffix) and len(word) > len(suffix) + 2:
+            return word[: -len(suffix)]
+    if word.endswith("ly") and len(word) > 4:
+        return word[:-2]
+    if word.endswith("ed") and len(word) > 4:
+        return word[:-2]
+    if word.endswith("es") and len(word) > 4:
+        return word[:-2]
+    if word.endswith("s") and len(word) > 3 and not word.endswith("ss"):
+        return word[:-1]
+    return word
+
+
+def _step_text_to_words(step_text: str) -> set[str]:
+    """Extract lowercase stemmed words from step text."""
+    expanded = _split_camel_case(step_text)
+    cleaned = re.sub(r"[^a-zA-Z0-9\s]", " ", expanded)
+    return {_stem_word(w.lower()) for w in cleaned.split() if len(w) > 1}
+
+
+_NAMING_STOP_WORDS = frozenset(
+    {
+        "a",
+        "an",
+        "the",
+        "is",
+        "be",
+        "to",
+        "of",
+        "in",
+        "on",
+        "at",
+        "by",
+        "for",
+        "it",
+        "its",
+        "has",
+        "have",
+        "had",
+        "are",
+        "was",
+        "that",
+        "this",
+        "with",
+    }
+)
 
 
 def _check_step_file_naming(
@@ -738,13 +972,21 @@ def _check_step_file_naming(
 ) -> list[tuple[str, str, str]]:
     """Check that step files are named after their step pattern.
 
-    Returns list of (actual_file, actual_stem, expected_stem)
-    for mismatches.
+    Uses word-overlap: the filename's words should be a reasonable
+    subset of the step text's words plus feature-level context words.
+    Returns list of (actual_file, actual_stem, step_text) for mismatches.
     """
     findings: list[tuple[str, str, str]] = []
     seen_files: set[str] = set()
 
     for feature in features_json:
+        feature_uri = feature.get("uri", "")
+        feature_context = {
+            _stem_word(w)
+            for w in re.sub(r"[^a-zA-Z]", " ", Path(feature_uri).stem).lower().split()
+            if len(w) > 1
+        } - _NAMING_STOP_WORDS
+
         for element in feature.get("elements", []):
             for step in element.get("steps", []):
                 match = step.get("match")
@@ -756,11 +998,20 @@ def _check_step_file_naming(
                     seen_files.add(file_path)
 
                     name = step.get("name", "")
-                    expected = _step_text_to_filename(name)
-                    actual = Path(file_path).stem
+                    step_words = (
+                        _step_text_to_words(name) | feature_context
+                    ) - _NAMING_STOP_WORDS
+                    file_words = {
+                        _stem_word(w)
+                        for w in Path(file_path).stem.lower().split("_")
+                        if len(w) > 1
+                    } - _NAMING_STOP_WORDS
+                    if not file_words or not step_words:
+                        continue
 
-                    if expected and actual != expected:
-                        findings.append((file_path, actual, expected))
+                    overlap = len(file_words & step_words) / len(file_words)
+                    if overlap < NAMING_SIMILARITY_THRESHOLD:
+                        findings.append((file_path, Path(file_path).stem, name))
 
     return findings
 
@@ -883,48 +1134,71 @@ def audit(
         print(f"Step files on disk: {len(all_step_files)}")
         print(f"Step files matched: {len(matched_normalized & all_normalized)}")
 
-        findings: list[str] = []
+        errors: list[str] = []
+        warnings: list[str] = []
 
         # Missing step definitions
         _print_section("Missing step definitions", undefined_steps)
-        if undefined_steps:
-            findings.extend(f"MISSING: {s}" for s in undefined_steps)
+        for s in undefined_steps:
+            errors.append(f"MISSING: {s}")
+            loc_match = re.search(r"\((.+):(\d+)\)$", s)
+            if loc_match:
+                _gh_annotation(
+                    "error",
+                    f"Missing step definition: {s}",
+                    loc_match.group(1),
+                    int(loc_match.group(2)),
+                )
+            else:
+                _gh_annotation("error", f"Missing step definition: {s}")
 
         # Unused step files
         unused_msgs = [str(f) for f in unused_files]
         _print_section("Unused step files", unused_msgs)
-        if unused_msgs:
-            findings.extend(f"UNUSED: {u}" for u in unused_msgs)
+        for u in unused_msgs:
+            errors.append(f"UNUSED: {u}")
+            _gh_annotation("error", "Unused step file", u)
 
-        # Near-duplicate files
+        # Near-duplicate files (warning only — similar names are expected
+        # for related-but-distinct steps)
         dup_messages: list[str] = []
         for f1, f2, ratio in near_dupes:
             pct = int(ratio * 100)
             dup_messages.append(
                 f"{pct}% similar:\n      {Path(f1).name}\n      {Path(f2).name}"
             )
-        _print_section("Near-duplicate step files", dup_messages)
+            _gh_annotation(
+                "warning", f"Near-duplicate ({pct}% similar to {Path(f2).name})", f1
+            )
+        _print_section("Near-duplicate step files (warning)", dup_messages)
         if dup_messages:
-            findings.extend(f"DUPLICATE: {d}" for d in dup_messages)
+            warnings.extend(f"DUPLICATE: {d}" for d in dup_messages)
 
         # Multi-step files
         multi_messages: list[str] = []
         for fp, steps in multi_step:
             step_list = ", ".join(steps)
             multi_messages.append(f"{fp}: {step_list}")
+            _gh_annotation("error", f"Multi-step file (contains: {step_list})", fp)
         _print_section("Multi-step files", multi_messages)
         if multi_messages:
-            findings.extend(f"MULTI-STEP: {m}" for m in multi_messages)
+            errors.extend(f"MULTI-STEP: {m}" for m in multi_messages)
 
-        # Step file naming
+        # Step file naming (warning only — filename words should overlap
+        # with the step text words)
         naming_messages: list[str] = []
-        for actual_file, actual_stem, expected_stem in naming_issues:
+        for actual_file, actual_stem, step_text in naming_issues:
             naming_messages.append(
-                f"{actual_file}: actual={actual_stem}, expected={expected_stem}"
+                f'{actual_file}: filename={actual_stem}, step="{step_text}"'
             )
-        _print_section("Step file naming", naming_messages)
+            _gh_annotation(
+                "warning",
+                f'Step file naming: "{actual_stem}" doesn\'t match step "{step_text}"',
+                actual_file,
+            )
+        _print_section("Step file naming (warning)", naming_messages)
         if naming_messages:
-            findings.extend(f"NAMING: {n}" for n in naming_messages)
+            warnings.extend(f"NAMING: {n}" for n in naming_messages)
 
         # Statistics
         print("\n  [Statistics]")
@@ -941,9 +1215,13 @@ def audit(
             if parent in STEP_DIR_NAMES:
                 keyword_dirs_found[parent] = keyword_dirs_found.get(parent, 0) + 1
             else:
-                findings.append(
+                msg = (
                     f"ORGANIZATION: {f} is not in a keyword directory "
                     f"(given/, when/, or then/)"
+                )
+                errors.append(msg)
+                _gh_annotation(
+                    "error", "Not in a keyword directory (given/, when/, or then/)", f
                 )
 
         if keyword_dirs_found:
@@ -952,11 +1230,13 @@ def audit(
                 count = keyword_dirs_found.get(kw, 0)
                 print(f"      {kw}/: {count} file(s)")
 
-        # Count feature steps
+        # Count feature steps (excluding hooks)
         total_feature_steps = 0
         for feature in features_json:
             for element in feature.get("elements", []):
-                total_feature_steps += len(element.get("steps", []))
+                for step in element.get("steps", []):
+                    if step.get("keyword", "").strip() not in HOOK_KEYWORDS:
+                        total_feature_steps += 1
 
         if total_feature_steps:
             matched_count = total_feature_steps - len(undefined_steps)
@@ -968,25 +1248,30 @@ def audit(
 
         # Summary
         print("\n--- Summary ---")
-        if not findings:
+        if not errors and not warnings:
             print("PASS: No issues found.")
         else:
-            print(f"FINDINGS: {len(findings)} issue(s) detected.")
-            if undefined_steps:
-                print(f"  - {len(undefined_steps)} missing step definition(s)")
-            if unused_msgs:
-                print(f"  - {len(unused_msgs)} unused step file(s)")
-            if dup_messages:
-                print(f"  - {len(dup_messages)} near-duplicate pair(s)")
-            if multi_messages:
-                print(f"  - {len(multi_messages)} multi-step file(s)")
-            if naming_messages:
-                print(f"  - {len(naming_messages)} step file naming issue(s)")
-            org_issues = [f for f in findings if f.startswith("ORGANIZATION:")]
-            if org_issues:
-                print(f"  - {len(org_issues)} file(s) not in keyword directories")
+            if errors:
+                print(f"ERRORS: {len(errors)} issue(s) detected.")
+                if undefined_steps:
+                    print(f"  - {len(undefined_steps)} missing step definition(s)")
+                if unused_msgs:
+                    print(f"  - {len(unused_msgs)} unused step file(s)")
+                if multi_messages:
+                    print(f"  - {len(multi_messages)} multi-step file(s)")
+                org_issues = [e for e in errors if e.startswith("ORGANIZATION:")]
+                if org_issues:
+                    print(f"  - {len(org_issues)} file(s) not in keyword directories")
+            if warnings:
+                print(f"WARNINGS: {len(warnings)} informational issue(s).")
+                if dup_messages:
+                    print(f"  - {len(dup_messages)} near-duplicate pair(s)")
+                if naming_messages:
+                    print(f"  - {len(naming_messages)} step file naming issue(s)")
+            if not errors:
+                print("PASS: No blocking issues found.")
 
-        if findings:
+        if errors:
             exit_code = 1
 
     return exit_code

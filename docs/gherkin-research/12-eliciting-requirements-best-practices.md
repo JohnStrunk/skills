@@ -78,7 +78,7 @@ criteria:
 - **Measurable:** Uses metrics (e.g., "99.9% uptime" vs. "high availability").
 - **Attainable:** Verification is technically possible.
 - **Relevant:** Maps to a business or safety goal.
-- **Time-bound:** Specifies *when* or *for how long* the behavior occurs.
+- **Time-bound:** Specifies _when_ or _for how long_ the behavior occurs.
 
 ---
 
@@ -109,7 +109,7 @@ and constraints.
 
 `[Condition] [Subject] [Action] [Object] [Constraint]`
 
-- *Example:* "When the emergency stop is pressed [Condition], the motor
+- _Example:_ "When the emergency stop is pressed [Condition], the motor
   [Subject] shall cease [Action] rotation [Object] within 0.5 seconds
   [Constraint]."
 

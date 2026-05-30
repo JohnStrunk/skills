@@ -132,7 +132,7 @@ shall sample vital signs at least once per second.
 
 System responses to undesirable situations — errors, failures,
 faults, or boundary violations. The `If ... then` keywords signal
-that the condition is *undesirable*, distinguishing this from
+that the condition is _undesirable_, distinguishing this from
 normal Event-Driven triggers.
 
 **When to use:** For error handling, fault tolerance, safety
@@ -605,7 +605,7 @@ language requirements:
 | **Omission** | Missing triggers, conditions, or responses | "The system shall disconnect the network" |
 | **Duplication** | Same requirement stated differently in multiple places | Redundant specs across documents |
 | **Wordiness** | Excessive verbosity obscuring intent | Multi-paragraph requirement burying the obligation |
-| **Inappropriate implementation** | Specifying *how* instead of *what* | "The system shall use a MySQL database" |
+| **Inappropriate implementation** | Specifying _how_ instead of _what_ | "The system shall use a MySQL database" |
 | **Untestability** | Cannot be verified through testing | "The system shall be reliable" |
 
 ### Anti-Pattern 1: Using the Wrong Pattern
@@ -777,8 +777,8 @@ like "it." Use consistent terminology — if the system is called
 
 ### Anti-Pattern 7: Specifying Implementation
 
-EARS requirements describe *what* the system must achieve, not
-*how* it achieves it internally.
+EARS requirements describe _what_ the system must achieve, not
+_how_ it achieves it internally.
 
 ```text
 BAD:
@@ -1156,7 +1156,7 @@ Before finalizing any EARS requirement, verify:
 - [ ] Response is specific and measurable
 - [ ] Correct EARS keyword is used (When/While/If-then/Where)
 - [ ] No vague adverbs, adjectives, or quantifiers
-- [ ] Describes *what*, not *how*
+- [ ] Describes _what_, not _how_
   (unless technology is the requirement)
 - [ ] Can a tester write a test case from this requirement alone?
 - [ ] Single behavior — would splitting improve clarity?
